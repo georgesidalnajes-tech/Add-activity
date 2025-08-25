@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Activity</title>
+  <base target="_top">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f8f8f8;
+    }
+    h2 {
+      margin-top: 5px;
+      background-color: #f2f2f2;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    h3 {
+      margin-bottom: 0;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    h4 {
+      margin-bottom: 0;
+      font-weight:normal;
+    }
+    .form-group {
+      margin-top: 5px;
+      margin-bottom: 5px;
+      display: flex;
+      flex-direction: column;
+      flex: 1; /* Ensures equal distribution in a flex row */
+    }
+    .form-group label {
+      margin-bottom: 4px;
+      font-weight: lighter;
+    }
+    input[type="text"], input[type="number"], select, textarea, input[type="email"] {
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-family: Arial, sans-serif;
+      text-transform: uppercase;
+      box-sizing: border-box;
+      width: 100%; /* Default width for all inputs except date */
+    }
+    /* Adjusted style for date input to match other text inputs' width */
+    input[type="date"] {
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-family: Arial, sans-serif;
+      text-transform: uppercase;
+      box-sizing: border-box;
+      width: 100%; /* Now takes full width of its container */
+      display: block; /* Ensures it behaves as a block element for layout */
+      margin: 0; /* Remove auto margins to allow it to fill space */
+    }
+    textarea {
+      resize: vertical;
+    }
+    .row {
+      display: flex;
+      gap: 15px; /* Adjust gap for better spacing */
+      margin-bottom: 10px; /* Adjust margin for rows */
+      flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+    }
+    .ownership-input {
+      flex: 4; /* Gives more space to this input */
+    }
+    .checkbox-row {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #007bff;
+      color: white;
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+      cursor: pointer;
+      transition: background-color 0.2s ease; /* Smooth transition for hover */
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #loadingOverlay, #confirmationOverlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.9);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+    .simple-box {
+      border: 1px solid #ccc;
+      padding: 30px 20px 20px;
+      margin: 5px 0;
+      position: relative;
+    }
+    .box-title {
+      position: absolute;
+      top: -10px;
+      left: 10px;
+      background-color: white;
+      padding: 0 5px;
+      font-size: 18px;
+      font-weight: bold;
+      line-height: 1;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #f2f2f2;
+      padding: 0 10px;
+      width: 100%;
+      margin-top: 20px;
+    }
+    .section-header h2 {
+      margin: 0;
+      padding: 10px 0;
+    }
+    .activity-fieldset {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        background-color: #f2f2f2;
+    }
+    .activity-fieldset legend {
+        font-weight: bold;
+    }
+    /* Style for the "Add New Activity" button */
+    .add-activity-instance-btn {
+        margin-top: 15px;
+        padding: 8px 15px;
+        background-color: #28a745; /* Green color */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    .add-activity-instance-btn:hover {
+        background-color: #218838;
+    }
+
+    /* Styles for the new company table (Pre-Facilitation, Enhancement) */
+    .company-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+    .company-table th, .company-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        vertical-align: top;
+        text-align: left;
+    }
+    /* Center align table headers */
+    .company-table th {
+        text-align: center; /* This is the key change */
+    }
+    .company-table input[type="text"],
+    .company-table select,
+    .company-table input[type="number"] {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 6px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
+    .company-table textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 6px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        resize: vertical;
+        min-height: 30px; /* Give it some minimum height */
+    }
+    .company-table td.remove-cell {
+      text-align: center;
+      vertical-align: middle;
+      padding: 0;
+    }
+    .company-table td.remove-cell button {
+        padding: 4px 8px;
+        font-size: 14px;
+        margin: 0;
+    }
+    /* Column widths for the new table for Pre-Facilitation and Enhancement */
+    .col-company-name { width: 15%; } /* Adjusted for LMC Name */
+    .col-lmc-name { width: 15%; } /* New LMC Name column */
+    .col-category { width: 8%; } /* Adjusted width */
+    .col-filed-case, .col-filed-rfa { width: 8%; } /* Adjusted width */
+    .company-table .col-participants-male,
+    .company-table .col-participants-female,
+    .company-table .col-participants-total {
+        width: 2%; /* Made smaller for participants, down from 3% */
+    }
+    .col-remove { width: 4%; } /* Adjusted width */
+
+    /* Style for the smaller, normal font weight text in table header */
+    .sub-header-text {
+        font-weight: normal;
+        font-size: 0.85em; /* Adjust as needed for desired smaller size */
+    }
+
+    /* Style for deletion details container */
+    .deletion-details {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin-top: 5px;
+    }
+    .deletion-details input,
+    .deletion-details textarea {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .hidden-field {
+        display: none;
+    }
+
+    /* Style for autofilled company details box in Monitoring Activity */
+    .autofill-company-box {
+        border: 1px solid #d3d3d3; /* Light grey border */
+        padding: 15px;
+        margin-top: 10px; /* Consistent small space between these themed boxes */
+        background-color: #f5f5f5; /* Slightly different background */
+        border-radius: 8px;
+    }
+
+    .autofill-company-box h3 {
+        margin-top: 0; /* Remove default top margin from h3 inside box */
+        margin-bottom: 10px; /* Keep some space below the main heading in the box */
+        font-size: 1.2em; /* Ensure it's clearly a heading */
+    }
+
+    /* Styles for the LMC Projects Implemented tables */
+    .lmc-project-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 5px; /* Reduced space above the table */
+      margin-bottom: 0px; /* Remove space below table */
+    }
+    .lmc-project-table th, .lmc-project-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      vertical-align: top;
+      text-align: left;
+    }
+    .lmc-project-table th {
+      text-align: center;
+    }
+    .lmc-project-table input[type="text"],
+    .lmc-project-table input[type="date"],
+    .lmc-project-table textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      min-height: 30px;
+    }
+    .lmc-project-table td.remove-cell {
+      text-align: center;
+      vertical-align: middle;
+      padding: 0;
+    }
+    .lmc-project-table td.remove-cell button {
+        padding: 4px 8px;
+        font-size: 14px;
+        margin: 0;
+    }
+    /* Specific column widths for LMC Project tables */
+    .lmc-project-table .col-project-title { width: 30%; }
+    .lmc-project-table .col-date-implemented { width: 20%; }
+    .lmc-project-table .col-details { width: 40%; }
+    .lmc-project-table .col-action { width: 10%; }
+
+    /* New style for LMC Projects sub-section titles */
+    .lmc-sub-section-title {
+        font-size: 1.1em; /* Slightly smaller than h3, larger than regular text */
+        font-weight: bold;
+        margin-top: 10px; /* Small space above sub-section title */
+        margin-bottom: 5px; /* Small space below sub-section title */
+        color: #333; /* Good contrast */
+    }
+
+    .lmc-project-table + .add-activity-instance-btn { /* Style for button immediately following table */
+        margin-top: 5px; /* Bring button closer to the table */
+        margin-bottom: 10px; /* Space between this button and next element, if any */
+    }
+
+    /* Style for Issues Addressed table */
+    .issues-addressed-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 5px;
+      margin-bottom: 0px;
+    }
+    .issues-addressed-table th, .issues-addressed-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      vertical-align: top;
+      text-align: left;
+    }
+    .issues-addressed-table th {
+      text-align: center;
+      font-size: 0.9em; /* Smaller font for headers */
+      line-height: 1.2; /* Tighter line height for multi-line headers */
+    }
+    .issues-addressed-table input[type="text"],
+    .issues-addressed-table input[type="date"] {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      min-height: 30px;
+    }
+    .issues-addressed-table td.remove-cell button {
+      padding: 4px 8px;
+      font-size: 14px;
+      margin: 0;
+    }
+    /* Column widths for Issues Addressed table */
+    .issues-addressed-table .col-issues-topics { width: 20%; }
+    .issues-addressed-table .col-date-raised,
+    .issues-addressed-table .col-date-settled,
+    .issues-addressed-table .col-date-elevated,
+    .issues-addressed-table .col-date-settled-gm { width: 15%; }
+    .issues-addressed-table .col-referred-forums { width: 25%; }
+    .issues-addressed-table .col-action { width: 10%; }
+
+
+    /* Responsive adjustments for mobile */
+    @media (max-width: 768px) {
+      .row {
+        flex-direction: column; /* Stack form groups vertically */
+        gap: 10px;
+      }
+      .form-group, .ownership-input, .small-input-1 {
+        width: 100%; /* Full width on small screens */
+      }
+    }
+  </style>
+</head>
+<body>
+  <form id="activityForm" onsubmit="handleSubmit(event)">
+    <div id="loadingOverlay">Submitting. Please wait.</div>
+
+    <div class="simple-box">
+        <h3 class="box-title">Activity Type</h3>
+        <div class="form-group">
+            <select id="activityTypeSelect" name="mainActivityType" onchange="displayActivityFields()">
+                <option value="">Select an activity...</option>
+                <option value="PRE-FACILITATION ACTIVITY">PRE-FACILITATION ACTIVITY</option>
+                <option value="FACILITATION ACTIVITY">FACILITATION ACTIVITY</option>
+                <option value="ENHANCEMENT ACTIVITY">ENHANCEMENT ACTIVITY</option>
+                <option value="MONITORING ACTIVITY">MONITORING ACTIVITY</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="activityFieldsContainer">
+      <!-- Activity-specific fields will be loaded here -->
+    </div>
+
+    <button type="submit">Submit Activity</button>
+  </form>
+
+  <script>
+    let preFacilitationActivityCount = 0; // Counter for PRE-FACILITATION ACTIVITY instances
+    let enhancementActivityCount = 0; // Counter for ENHANCEMENT ACTIVITY instances
+    let monitoringActivityCount = 0; // Counter for MONITORING ACTIVITY instances
+
+    // Counters for LMC projects within monitoring activity
+    let lmcProjectRowCount_healthSafety = [];
+    let lmcProjectRowCount_livelihood = [];
+    let lmcProjectRowCount_sportsRecreation = [];
+    let lmcProjectRowCount_productivityQuality = [];
+    let lmcProjectRowCount_communityEnvironment = [];
+    let lmcProjectRowCount_genderDevelopment = [];
+    let lmcProjectRowCount_familyWelfare = [];
+    let lmcProjectRowCount_grievanceMachinery = [];
+    // New counter for Issues Addressed table
+    let issuesAddressedRowCount = [];
+
+
+    // Mock data for demonstration purposes. In a real scenario, this would come from Google Apps Script.
+    // Structure: { companyName: [LMC1, LMC2, ...], ... }
+    const MOCK_COMPANY_LMC_DATA = {
+        "Company A": ["LMC A1", "LMC A2"],
+        "Company B": ["LMC B1", "LMC B2", "LMC B3"],
+        "Company C": ["LMC C1"],
+        "Other Company": ["General LMC"]
+    };
+    const MOCK_COMPANIES = Object.keys(MOCK_COMPANY_LMC_DATA); // Just the company names
+
+    // Mock data for full company details based on company name and LMC name
+    const MOCK_FULL_COMPANY_DETAILS = {
+        "Company A": {
+            "LMC A1": {
+                category: "Organized",
+                acronym: "CA1",
+                filedCase: "Yes",
+                filedRFA: "No",
+                address: {
+                    building: "Bldg A", street: "Street A", barangay: "Brgy A",
+                    municipality: "Mun A", province: "Prov A", ecozone: "Yes"
+                },
+                industry: {
+                    section: "AGRICULTURE, FORESTRY AND FISHING",
+                    division: "CROP PRODUCTION",
+                    group: "GROWING OF CROPS",
+                    class: "GROWING OF CEREALS",
+                    subclass: "LEGUMINOUS CROPS"
+                }
+            },
+            "LMC A2": {
+                category: "Unorganized",
+                acronym: "CA2",
+                filedCase: "No",
+                filedRFA: "Yes",
+                address: {
+                    building: "Bldg B", street: "Street B", barangay: "Brgy B",
+                    municipality: "Mun B", province: "Prov B", ecozone: "No"
+                },
+                industry: {
+                    section: "MANUFACTURING",
+                    division: "FOOD MANUFACTURING",
+                    group: "BAKERY PRODUCTS",
+                    class: "BREAD MAKING",
+                    subclass: "ARTISAN BREAD"
+                }
+            }
+        },
+        "Company B": {
+            "LMC B1": {
+                category: "Organized",
+                acronym: "CB1",
+                filedCase: "No",
+                filedRFA: "No",
+                address: {
+                    building: "Bldg C", street: "Street C", barangay: "Brgy C",
+                    municipality: "Mun C", province: "Prov C", ecozone: "Yes"
+                },
+                industry: {
+                    section: "MANUFACTURING",
+                    division: "FOOD MANUFACTURING",
+                    group: "BAKERY PRODUCTS",
+                    class: "BREAD MAKING",
+                    subclass: "PACKAGED BREAD"
+                }
+            }
+        },
+        "Company C": {
+            "LMC C1": {
+                category: "Organized",
+                acronym: "CC1",
+                filedCase: "Yes",
+                filedRFA: "Yes",
+                address: {
+                    building: "Unit 1", street: "Main St", barangay: "Centro",
+                    municipality: "Cityville", province: "State", ecozone: "No"
+                },
+                industry: {
+                    section: "AGRICULTURE, FORESTRY AND FISHING",
+                    division: "CROP PRODUCTION",
+                    group: "GROWING OF CROPS",
+                    class: "GROWING OF CEREALS",
+                    subclass: "GROUNDNUTS"
+                }
+            }
+        },
+        "Other Company": {
+            "General LMC": {
+                category: "Unorganized",
+                acronym: "OC",
+                filedCase: "No",
+                filedRFA: "No",
+                address: {
+                    building: "HQ", street: "Corporate Ave", barangay: "North",
+                    municipality: "Metropolis", province: "Region", ecozone: "Yes"
+                },
+                industry: {
+                    section: "MANUFACTURING",
+                    division: "FOOD MANUFACTURING",
+                    group: "BAKERY PRODUCTS",
+                    class: "BREAD MAKING",
+                    subclass: "ARTISAN BREAD"
+                }
+            }
+        }
+    };
+
+
+    // Industry cascade data (reused from company_entry_form)
+    const industryData = {
+      "AGRICULTURE, FORESTRY AND FISHING": {
+        "CROP PRODUCTION": {
+          "GROWING OF CROPS": {
+            "GROWING OF CEREALS": ["LEGUMINOUS CROPS", "GROUNDNUTS"]
+          }
+        }
+      },
+      "MANUFACTURING": {
+        "FOOD MANUFACTURING": {
+          "BAKERY PRODUCTS": {
+            "BREAD MAKING": ["ARTISAN BREAD", "PACKAGED BREAD"]
+          }
+        }
+      }
+    };
+
+    // Generic populate function (reused from company_entry_form)
+    function populateSelect(selectElement, items, selectedValue = '') {
+      selectElement.innerHTML = `<option value="">Select...</option>`;
+      items.forEach(i => {
+        const option = new Option(i, i);
+        if (i === selectedValue) {
+          option.selected = true;
+        }
+        selectElement.add(option);
+      });
+    }
+
+    // Function to update industry dropdowns for a specific monitoring fieldset
+    function updateIndustryDropdowns(fieldsetIndex, type) {
+      const sectionSelect = document.getElementById(`${type}IndustrySection_${fieldsetIndex}`);
+      const divisionSelect = document.getElementById(`${type}IndustryDivision_${fieldsetIndex}`);
+      const groupSelect = document.getElementById(`${type}IndustryGroup_${fieldsetIndex}`);
+      const classSelect = document.getElementById(`${type}IndustryClass_${fieldsetIndex}`);
+      const subclassSelect = document.getElementById(`${type}IndustrySubclass_${fieldsetIndex}`);
+
+      const sectionVal = sectionSelect.value;
+      const divisionVal = divisionSelect.value;
+      const groupVal = groupSelect.value;
+      const classVal = classSelect.value;
+
+      if (sectionVal) {
+        populateSelect(divisionSelect, Object.keys(industryData[sectionVal]), divisionVal);
+      } else {
+        populateSelect(divisionSelect, []);
+      }
+      
+      if (sectionVal && divisionVal) {
+        populateSelect(groupSelect, Object.keys(industryData[sectionVal][divisionVal]), groupVal);
+      } else {
+        populateSelect(groupSelect, []);
+      }
+
+      if (sectionVal && divisionVal && groupVal) {
+        populateSelect(classSelect, Object.keys(industryData[sectionVal][divisionVal][groupVal]), classVal);
+      } else {
+        populateSelect(classSelect, []);
+      }
+
+      if (sectionVal && divisionVal && groupVal && classVal) {
+        populateSelect(subclassSelect, industryData[sectionVal][divisionVal][groupVal][classVal], subclassSelect.value);
+      } else {
+        populateSelect(subclassSelect, []);
+      }
+    }
+
+
+    function generatePreFacilitationFields(fieldsetIndex) {
+      // Initialize row count for the company table within this fieldset
+      window[`companyTableRowCount_preFacilitation_${fieldsetIndex}`] = 0;
+
+      return `
+        <fieldset class="activity-fieldset">
+          <legend>PRE-FACILITATION ACTIVITY ${fieldsetIndex + 1}</legend>
+          <div class="form-group">
+            <label>Activity</label>
+            <select name="preFacilitationActivityType_${fieldsetIndex}" required>
+              <option value="">Select Activity</option>
+              <option value="Area-Wide Seminar">Area-Wide Seminar</option>
+              <option value="Plant-Level Orientation Seminar">Plant-Level Orientation Seminar</option>
+              <option value="Consultation-Meeting">Consultation-Meeting</option>
+            </select>
+          </div>
+          <div class="row">
+              <div class="form-group">
+                  <label>Activity Title</label>
+                  <input type="text" name="preFacilitationActivityTitle_${fieldsetIndex}" required>
+              </div>
+              <div class="form-group">
+                  <label>Date Conducted</label>
+                  <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="date" name="preFacilitationDateConductedStart_${fieldsetIndex}" required style="flex: 1;">
+                    <span>to</span>
+                    <input type="date" name="preFacilitationDateConductedEnd_${fieldsetIndex}" required style="flex: 1;">
+                  </div>
+              </div>
+          </div>
+          <h4>Convergence</h4>
+          <div class="checkbox-row">
+            <label><input type="checkbox" name="preFacilitationConvergenceNWPC_${fieldsetIndex}"> NWPC/RTWPB</label>
+            <label><input type="checkbox" name="preFacilitationConvergenceOSHC_${fieldsetIndex}"> ECC/OSHC</label>
+            <label><input type="checkbox" name="preFacilitationConvergenceDOLE_${fieldsetIndex}"> DOLE-RO</label>
+          </div>
+          <div class="form-group">
+            <label>Details</label>
+            <textarea name="preFacilitationDetails_${fieldsetIndex}" rows="4" placeholder="Enter details..."></textarea>
+          </div>
+
+          <h3>Participating Companies</h3>
+          <table class="company-table" id="companyTable_preFacilitation_${fieldsetIndex}">
+            <thead>
+              <tr>
+                <th class="col-company-name">Company Name</th>
+                <th class="col-category">Category</th>
+                <th class="col-filed-case">With Filed Case?</th>
+                <th class="col-filed-rfa">With Filed RFA?</th>
+                <th colspan="3">No. of Participants<br><span class="sub-header-text">(Male / Female / Total)</span></th>
+                <th class="col-remove">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Initial row for the company table -->
+            </tbody>
+          </table>
+          <button type="button" class="add-activity-instance-btn" onclick="addCompanyTableRow('companyTable_preFacilitation_${fieldsetIndex}', 'preFacilitation', ${fieldsetIndex})">Add Company</button>
+          <button type="button" class="remove-activity-fieldset-btn" onclick="removeRow(this)">Remove Activity</button>
+        </fieldset>
+      `;
+    }
+
+    function generateEnhancementFields(fieldsetIndex) {
+      // Initialize row count for the company table within this fieldset (if applicable)
+      window[`companyTableRowCount_enhancement_${fieldsetIndex}`] = 0;
+
+      return `
+        <fieldset class="activity-fieldset">
+          <legend>ENHANCEMENT ACTIVITY ${fieldsetIndex + 1}</legend>
+          <div class="form-group">
+            <label>Activity</label>
+            <select name="enhancementActivityType_${fieldsetIndex}" required>
+              <option value="">Select Activity</option>
+              <option value="Training">Training</option>
+              <option value="Workshop">Workshop</option>
+              <option value="Seminar">Seminar</option>
+            </select>
+          </div>
+          <div class="row">
+              <div class="form-group">
+                  <label>Activity Title</label>
+                  <input type="text" name="enhancementActivityTitle_${fieldsetIndex}" required>
+              </div>
+              <div class="form-group">
+                  <label>Date Conducted</label>
+                  <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="date" name="enhancementDateConductedStart_${fieldsetIndex}" required style="flex: 1;">
+                    <span>to</span>
+                    <input type="date" name="enhancementDateConductedEnd_${fieldsetIndex}" required style="flex: 1;">
+                  </div>
+              </div>
+          </div>
+          <h4>Convergence</h4>
+          <div class="checkbox-row">
+            <label><input type="checkbox" name="enhancementConvergenceNWPC_${fieldsetIndex}"> NWPC/RTWPB</label>
+            <label><input type="checkbox" name="enhancementConvergenceOSHC_${fieldsetIndex}"> ECC/OSHC</label>
+            <label><input type="checkbox" name="enhancementConvergenceDOLE_${fieldsetIndex}"> DOLE-RO</label>
+          </div>
+          <div class="form-group">
+            <label>Details</label>
+            <textarea name="enhancementDetails_${fieldsetIndex}" rows="4" placeholder="Enter details..."></textarea>
+          </div>
+
+          <h3>Participating Companies</h3>
+          <table class="company-table" id="companyTable_enhancement_${fieldsetIndex}">
+            <thead>
+              <tr>
+                <th class="col-company-name">Company Name</th>
+                <th class="col-lmc-name">LMC Name</th>
+                <th class="col-category">Category</th>
+                <th class="col-filed-case">With Filed Case?</th>
+                <th class="col-filed-rfa">With Filed RFA?</th>
+                <th colspan="3">No. of Participants<br><span class="sub-header-text">(Male / Female / Total)</span></th>
+                <th class="col-remove">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Initial row for the company table -->
+            </tbody>
+          </table>
+          <button type="button" class="add-activity-instance-btn" onclick="addCompanyTableRow('companyTable_enhancement_${fieldsetIndex}', 'enhancement', ${fieldsetIndex})">Add Company</button>
+          <button type="button" class="remove-activity-fieldset-btn" onclick="removeRow(this)">Remove Activity</button>
+        </fieldset>
+      `;
+    }
+
+    function generateMonitoringFields(fieldsetIndex) {
+      // Initialize LMC project row counts for this monitoring instance
+      lmcProjectRowCount_healthSafety[fieldsetIndex] = 0;
+      lmcProjectRowCount_livelihood[fieldsetIndex] = 0;
+      lmcProjectRowCount_sportsRecreation[fieldsetIndex] = 0;
+      lmcProjectRowCount_productivityQuality[fieldsetIndex] = 0;
+      lmcProjectRowCount_communityEnvironment[fieldsetIndex] = 0;
+      lmcProjectRowCount_genderDevelopment[fieldsetIndex] = 0;
+      lmcProjectRowCount_familyWelfare[fieldsetIndex] = 0;
+      lmcProjectRowCount_grievanceMachinery[fieldsetIndex] = 0;
+      issuesAddressedRowCount[fieldsetIndex] = 0; // Initialize counter for Issues Addressed
+
+      return `
+        <fieldset class="activity-fieldset">
+          <legend>MONITORING ACTIVITY ${fieldsetIndex + 1}</legend>
+          <div class="form-group">
+            <label for="monitoringCompanyName_${fieldsetIndex}">Company Name</label>
+            <select id="monitoringCompanyName_${fieldsetIndex}" name="monitoringCompanyName_${fieldsetIndex}" onchange="loadLMCsForCompany(this, 'monitoring', ${fieldsetIndex})" required>
+              <option value="">Select Company</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="monitoringLmcName_${fieldsetIndex}">LMC Name</label>
+            <select id="monitoringLmcName_${fieldsetIndex}" name="monitoringLmcName_${fieldsetIndex}" required>
+              <option value="">Select LMC</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="monitoringDateMonitored_${fieldsetIndex}">Date Monitored</label>
+            <input type="date" id="monitoringDateMonitored_${fieldsetIndex}" name="monitoringDateMonitored_${fieldsetIndex}" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="monitoringIssues_${fieldsetIndex}">Issue/Difficulties experienced/encountered by the LMCs</label>
+            <textarea id="monitoringIssues_${fieldsetIndex}" name="monitoringIssues_${fieldsetIndex}" rows="3" placeholder="Enter issues/difficulties..."></textarea>
+          </div>
+          <div class="form-group">
+            <label for="monitoringAssistance_${fieldsetIndex}">Assistance/Solutions rendered by the RB</label>
+            <textarea id="monitoringAssistance_${fieldsetIndex}" name="monitoringAssistance_${fieldsetIndex}" rows="3" placeholder="Enter assistance/solutions..."></textarea>
+          </div>
+          <div class="form-group">
+            <label for="monitoringDeleted_${fieldsetIndex}">Deleted</label>
+            <select id="monitoringDeleted_${fieldsetIndex}" name="monitoringDeleted_${fieldsetIndex}" onchange="toggleDeletionFieldsMonitoring(this, ${fieldsetIndex})" required>
+              <option value="">Select</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div id="monitoringDeletionDetails_${fieldsetIndex}" class="deletion-details hidden-field">
+            <div class="form-group">
+                <label for="monitoringDateDeleted_${fieldsetIndex}">Date Deleted</label>
+                <input type="date" id="monitoringDateDeleted_${fieldsetIndex}" name="monitoringDateDeleted_${fieldsetIndex}">
+            </div>
+            <div class="form-group">
+                <label for="monitoringReasonForDeletion_${fieldsetIndex}">Reason for Deletion</label>
+                <textarea id="monitoringReasonForDeletion_${fieldsetIndex}" name="monitoringReasonForDeletion_${fieldsetIndex}" rows="2" placeholder="Enter reason for deletion..."></textarea>
+            </div>
+          </div>
+
+          <!-- LMC Projects Implemented Section -->
+          <div class="autofill-company-box">
+            <h3>LMC Projects Implemented</h3>
+            <div class="lmc-sub-section-title">Health and Safety</div>
+            <table class="lmc-project-table" id="healthSafetyTable_${fieldsetIndex}">
+              <thead>
+                <tr>
+                  <th class="col-project-title">Project Title</th>
+                  <th class="col-date-implemented">Date Implemented</th>
+                  <th class="col-details">Details</th>
+                  <th class="col-action">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Rows added dynamically -->
+              </tbody>
+            </table>
+            <button type="button" class="add-activity-instance-btn" onclick="addLmcProjectTableRow('healthSafetyTable_${fieldsetIndex}', 'healthSafety', ${fieldsetIndex})">Add Row</button>
+
+            <div class="lmc-sub-section-title">Livelihood</div>
+            <table class="lmc-project-table" id="livelihoodTable_${fieldsetIndex}">
+              <thead>
+                <tr>
+                  <th class="col-project-title">Project Title</th>
+                  <th class="col-date-implemented">Date Implemented</th>
+                  <th class="col-details">Details</th>
+                  <th class="col-action">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Rows added dynamically -->
+              </tbody>
+            </table>
+            <button type="button" class="add-activity-instance-btn" onclick="addLmcProjectTableRow('livelihoodTable_${fieldsetIndex}', 'livelihood', ${fieldsetIndex})">Add Row</button>
+
+            <div class="lmc-sub-section-title">Sports and Recreation</div>
+            <table class="lmc-project-table" id="sportsRecreationTable_${fieldsetIndex}">
+              <thead>
+                <tr>
+                  <th class="col-project-title">Project Title</th>
+                  <th class="col-date-implemented">Date Implemented</th>
+                  <th class="col-details">Details</th>
+                  <th class="col-action">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Rows added dynamically -->
+              </tbody>
+            </table>
+            <button type="button" class="add-activity-instance-btn" onclick="addLmcProjectTableRow('sportsRecreationTable_${fieldsetIndex}', 'sportsRecreation', ${fieldsetIndex})">Add Row</button>
+
+            <div class="lmc-sub-section-title">Productivity/Quality</div>
+            <table class="lmc-project-table" id="productivityQualityTable_${fieldsetIndex}">
+              <thead>
+                <tr>
+                  <th class="col-project-title">Project Title</th>
+                  <th class="col-date-implemented">Date Implemented</th>
+                  <th class="col-details">Details</th>
+                  <th class="col-action">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Rows added dynamically -->
+              </tbody>
+            </table>
+            <button type="button" class="add-activity-instance-btn" onclick="addLmcProjectTableRow('productivityQualityTable_${fieldsetIndex}', 'productivityQuality', ${fieldsetIndex})">Add Row</button>
+
+            <div class="lmc-sub-section-title">Community and Environment Relations</div>
+            <table class="lmc-project-table" id="communityEnvironmentTable_${fieldsetIndex}">
+              <thead>
+                <tr>
+                  <th class="col-project-title">Project Title</th>
+                  <th class="col-date-implemented">Date Implemented</th>
+                  <th class="col-details">Details</th>
+                  <th class="col-action">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Rows added dynamically -->
+              </tbody>
+            </table>
+            <button type="button" class="add-activity-instance-btn" onclick="addLmcProjectTableRow('communityEnvironmentTable_${fieldsetIndex}', 'communityEnvironment', ${fieldsetIndex})">Add Row</button>
+
+            <div class="lmc-sub-section-title">Gender and Development</div>
+            <table class="lmc-project-table" id="genderDevelopmentTable_${fieldsetIndex}">
+              <thead>
+                <tr>
+                  <th class="col-project-title">Project Title</th>
+                  <th class="col-date-implemented">Date Implemented</th>
+                  <th class="col-details">Details</th>
+                  <th class="col-action">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Rows added dynamically -->
+              </tbody>
+            </table>
+            <button type="button" class="add-activity-instance-btn" onclick="addLmcProjectTableRow('genderDevelopmentTable_${fieldsetIndex}', 'genderDevelopment', ${fieldsetIndex})">Add Row</button>
+
+            <div class="lmc-sub-section-title">Family Welfare</div>
+            <table class="lmc-project-table" id="familyWelfareTable_${fieldsetIndex}">
+              <thead>
+                <tr>
+                  <th class="col-project-title">Project Title</th>
+                  <th class="col-date-implemented">Date Implemented</th>
+                  <th class="col-details">Details</th>
+                  <th class="col-action">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Rows added dynamically -->
+              </tbody>
+            </table>
+            <button type="button" class="add-activity-instance-btn" onclick="addLmcProjectTableRow('familyWelfareTable_${fieldsetIndex}', 'familyWelfare', ${fieldsetIndex})">Add Row</button>
+
+            <div class="lmc-sub-section-title">Grievance Machinery/Disciplinary Committee</div>
+            <table class="lmc-project-table" id="grievanceMachineryTable_${fieldsetIndex}">
+              <thead>
+                <tr>
+                  <th class="col-project-title">Project Title</th>
+                  <th class="col-date-implemented">Date Implemented</th>
+                  <th class="col-details">Details</th>
+                  <th class="col-action">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Rows added dynamically -->
+              </tbody>
+            </table>
+            <button type="button" class="add-activity-instance-btn" onclick="addLmcProjectTableRow('grievanceMachineryTable_${fieldsetIndex}', 'grievanceMachinery', ${fieldsetIndex})">Add Row</button>
+          </div>
+
+          <!-- Issues Addressed Section -->
+          <div class="autofill-company-box">
+            <h3>Issues Addressed (please list specific issues (grievance or not))</h3>
+            <table class="issues-addressed-table" id="issuesAddressedTable_${fieldsetIndex}">
+              <thead>
+                <tr>
+                  <th class="col-issues-topics">Issues/Topics</th>
+                  <th class="col-date-raised">Date Raised or Discussed</th>
+                  <th class="col-date-settled">Date Settled or Resolved</th>
+                  <th class="col-date-elevated">If unsettled, date elevated to GM</th>
+                  <th class="col-date-settled-gm">Date settled through GM</th>
+                  <th class="col-referred-forums">Referred to other Forums<br>(please specify forum and date)</th>
+                  <th class="col-action">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Rows added dynamically -->
+              </tbody>
+            </table>
+            <button type="button" class="add-activity-instance-btn" onclick="addIssuesAddressedTableRow('issuesAddressedTable_${fieldsetIndex}', ${fieldsetIndex})">Add Row</button>
+          </div>
+
+          <!-- Remarks Section -->
+          <div class="autofill-company-box">
+            <h3>Remarks</h3>
+            <div class="form-group">
+              <textarea id="monitoringRemarks_${fieldsetIndex}" name="monitoringRemarks_${fieldsetIndex}" rows="3" placeholder="Enter remarks..."></textarea>
+            </div>
+          </div>
+
+          <!-- Autofilled Company Details Container -->
+          <div class="autofill-company-box">
+            <h3>Company Details (Autofilled)</h3>
+            <div class="row">
+              <div class="form-group">
+                <label for="monitoringCategory_${fieldsetIndex}">Category</label>
+                <select id="monitoringCategory_${fieldsetIndex}" name="monitoringCategory_${fieldsetIndex}" readonly>
+                  <option value="">Select...</option>
+                  <option value="Organized">Organized</option>
+                  <option value="Unorganized">Unorganized</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="monitoringAcronym_${fieldsetIndex}">Acronym</label>
+                <input type="text" id="monitoringAcronym_${fieldsetIndex}" name="monitoringAcronym_${fieldsetIndex}" readonly>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group">
+                <label for="monitoringFiledCase_${fieldsetIndex}">With Filed Case?</label>
+                <select id="monitoringFiledCase_${fieldsetIndex}" name="monitoringFiledCase_${fieldsetIndex}" readonly>
+                  <option value="">Select...</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="monitoringFiledRFA_${fieldsetIndex}">With Filed RFA?</label>
+                <select id="monitoringFiledRFA_${fieldsetIndex}" name="monitoringFiledRFA_${fieldsetIndex}" readonly>
+                  <option value="">Select...</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Company Address (Autofilled) -->
+            <h3>Company Address (Autofilled)</h3>
+            <div class="row">
+              <div class="form-group"><label for="monitoringBuilding_${fieldsetIndex}">Building No.</label><input type="text" id="monitoringBuilding_${fieldsetIndex}" name="monitoringBuilding_${fieldsetIndex}" readonly></div>
+              <div class="form-group"><label for="monitoringStreet_${fieldsetIndex}">Street</label><input type="text" id="monitoringStreet_${fieldsetIndex}" name="monitoringStreet_${fieldsetIndex}" readonly></div>
+              <div class="form-group"><label for="monitoringBarangay_${fieldsetIndex}">Barangay</label><input type="text" id="monitoringBarangay_${fieldsetIndex}" name="monitoringBarangay_${fieldsetIndex}" readonly></div>
+            </div>
+            <div class="row">
+              <div class="form-group"><label for="monitoringMunicipality_${fieldsetIndex}">Municipality</label><input type="text" id="monitoringMunicipality_${fieldsetIndex}" name="monitoringMunicipality_${fieldsetIndex}" readonly></div>
+              <div class="form-group"><label for="monitoringProvince_${fieldsetIndex}">Province/City</label><input type="text" id="monitoringProvince_${fieldsetIndex}" name="monitoringProvince_${fieldsetIndex}" readonly></div>
+              <div class="form-group">
+                <label for="monitoringEcozone_${fieldsetIndex}">Ecozone</label>
+                <select id="monitoringEcozone_${fieldsetIndex}" name="monitoringEcozone_${fieldsetIndex}" readonly>
+                  <option value="">Select...</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Industry (Autofilled & Editable) -->
+            <h3>Industry</h3>
+            <div class="row">
+              <div class="form-group">
+                  <label for="monitoringIndustrySection_${fieldsetIndex}">Section</label>
+                  <select id="monitoringIndustrySection_${fieldsetIndex}" name="monitoringIndustrySection_${fieldsetIndex}" onchange="updateIndustryDropdowns(${fieldsetIndex}, 'monitoring')">
+                      <option value="">Select Section</option>
+                  </select>
+              </div>
+              <div class="form-group">
+                  <label for="monitoringIndustryDivision_${fieldsetIndex}">Division</label>
+                  <select id="monitoringIndustryDivision_${fieldsetIndex}" name="monitoringIndustryDivision_${fieldsetIndex}" onchange="updateIndustryDropdowns(${fieldsetIndex}, 'monitoring')">
+                      <option value="">Select Division</option>
+                  </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group">
+                  <label for="monitoringIndustryGroup_${fieldsetIndex}">Group</label>
+                  <select id="monitoringIndustryGroup_${fieldsetIndex}" name="monitoringIndustryGroup_${fieldsetIndex}" onchange="updateIndustryDropdowns(${fieldsetIndex}, 'monitoring')">
+                      <option value="">Select Group</option>
+                  </select>
+              </div>
+              <div class="form-group">
+                  <label for="monitoringIndustryClass_${fieldsetIndex}">Class</label>
+                  <select id="monitoringIndustryClass_${fieldsetIndex}" name="monitoringIndustryClass_${fieldsetIndex}" onchange="updateIndustryDropdowns(${fieldsetIndex}, 'monitoring')">
+                      <option value="">Select Class</option>
+                  </select>
+              </div>
+              <div class="form-group">
+                  <label for="monitoringIndustrySubclass_${fieldsetIndex}">Subclass</label>
+                  <select id="monitoringIndustrySubclass_${fieldsetIndex}" name="monitoringIndustrySubclass_${fieldsetIndex}">
+                      <option value="">Select Subclass</option>
+                  </select>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="remove-activity-fieldset-btn" onclick="removeRow(this)">Remove Activity</button>
+        </fieldset>
+      `;
+    }
+
+    function addCompanyTableRow(tableId, type, fieldsetIndex) {
+      const table = document.getElementById(tableId);
+      if (!table) return console.error(`Table with ID '${tableId}' not found.`);
+      const tbody = table.querySelector('tbody');
+      const rowIndex = window[`companyTableRowCount_${type}_${fieldsetIndex}`]++;
+
+      const newRow = document.createElement('tr');
+      let rowHtml = '';
+
+      if (type === 'preFacilitation') {
+        rowHtml += `
+          <td><input type="text" name="${tableId}_companyName_${rowIndex}" required></td>`;
+      } else if (type === 'enhancement') {
+        rowHtml += `
+          <td>
+            <select name="${tableId}_companyName_${rowIndex}" onchange="loadLMCsForCompany(this, '${type}', ${fieldsetIndex}, ${rowIndex})" required>
+              <option value="">Select Company</option>
+            </select>
+          </td>
+          <td>
+            <select name="${tableId}_lmcName_${rowIndex}" required>
+              <option value="">Select LMC</option>
+            </select>
+          </td>`;
+      }
+
+      rowHtml += `
+          <td>
+            <select name="${tableId}_category_${rowIndex}" required>
+              <option value="">Select</option>
+              <option value="Organized">Organized</option>
+              <option value="Unorganized">Unorganized</option>
+            </select>
+          </td>
+          <td>
+            <select name="${tableId}_filedCase_${rowIndex}" required>
+              <option value="">Select</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </td>
+          <td>
+            <select name="${tableId}_filedRFA_${rowIndex}" required>
+              <option value="">Select</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </td>
+          <td><input type="number" name="${tableId}_maleParticipants_${rowIndex}" oninput="updateCompanyTotalParticipants(this, '${type}', ${fieldsetIndex}, ${rowIndex})" value="0"></td>
+          <td><input type="number" name="${tableId}_femaleParticipants_${rowIndex}" oninput="updateCompanyTotalParticipants(this, '${type}', ${fieldsetIndex}, ${rowIndex})" value="0"></td>
+          <td><input type="number" name="${tableId}_totalParticipants_${rowIndex}" readonly value="0"></td>
+          <td class="remove-cell">
+            <button type="button" onclick="removeRow(this)">Remove</button>
+          </td>
+      `;
+      newRow.innerHTML = rowHtml;
+      tbody.appendChild(newRow);
+
+      // After adding the row, populate the company dropdown for this new row, only if it's an enhancement type.
+      if (type === 'enhancement') {
+          const companySelect = newRow.querySelector(`select[name="${tableId}_companyName_${rowIndex}"]`);
+          if (companySelect) {
+              loadCompanies(companySelect);
+          }
+      }
+    }
+
+    function addLmcProjectTableRow(tableId, projectType, fieldsetIndex) {
+        const table = document.getElementById(tableId);
+        if (!table) return console.error(`Table with ID '${tableId}' not found.`);
+        const tbody = table.querySelector('tbody');
+        let rowIndex;
+
+        switch (projectType) {
+            case 'healthSafety':
+                rowIndex = lmcProjectRowCount_healthSafety[fieldsetIndex]++;
+                break;
+            case 'livelihood':
+                rowIndex = lmcProjectRowCount_livelihood[fieldsetIndex]++;
+                break;
+            case 'sportsRecreation':
+                rowIndex = lmcProjectRowCount_sportsRecreation[fieldsetIndex]++;
+                break;
+            case 'productivityQuality':
+                rowIndex = lmcProjectRowCount_productivityQuality[fieldsetIndex]++;
+                break;
+            case 'communityEnvironment':
+                rowIndex = lmcProjectRowCount_communityEnvironment[fieldsetIndex]++;
+                break;
+            case 'genderDevelopment':
+                rowIndex = lmcProjectRowCount_genderDevelopment[fieldsetIndex]++;
+                break;
+            case 'familyWelfare':
+                rowIndex = lmcProjectRowCount_familyWelfare[fieldsetIndex]++;
+                break;
+            case 'grievanceMachinery':
+                rowIndex = lmcProjectRowCount_grievanceMachinery[fieldsetIndex]++;
+                break;
+            default:
+                console.error("Invalid project type for LMC Projects table.");
+                return;
+        }
+
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td><input type="text" name="${tableId}_projectTitle_${rowIndex}" required></td>
+            <td><input type="date" name="${tableId}_dateImplemented_${rowIndex}" required></td>
+            <td><textarea name="${tableId}_details_${rowIndex}" rows="1" placeholder="Enter details..."></textarea></td>
+            <td class="remove-cell">
+                <button type="button" onclick="removeRow(this)">Remove</button>
+            </td>
+        `;
+        tbody.appendChild(newRow);
+    }
+
+    function addIssuesAddressedTableRow(tableId, fieldsetIndex) {
+        const table = document.getElementById(tableId);
+        if (!table) return console.error(`Table with ID '${tableId}' not found.`);
+        const tbody = table.querySelector('tbody');
+        const rowIndex = issuesAddressedRowCount[fieldsetIndex]++;
+
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td><input type="text" name="${tableId}_issuesTopics_${rowIndex}" required></td>
+            <td><input type="date" name="${tableId}_dateRaised_${rowIndex}"></td>
+            <td><input type="date" name="${tableId}_dateSettled_${rowIndex}"></td>
+            <td><input type="date" name="${tableId}_dateElevatedGM_${rowIndex}"></td>
+            <td><input type="date" name="${tableId}_dateSettledGM_${rowIndex}"></td>
+            <td><input type="text" name="${tableId}_referredForums_${rowIndex}" placeholder="(specify forum and date)"></td>
+            <td class="remove-cell">
+                <button type="button" onclick="removeRow(this)">Remove</button>
+            </td>
+        `;
+        tbody.appendChild(newRow);
+    }
+
+
+    function toggleDeletionFieldsMonitoring(selectElement, fieldsetIndex) {
+        const deletionDetailsDiv = document.getElementById(`monitoringDeletionDetails_${fieldsetIndex}`);
+        const dateInput = deletionDetailsDiv.querySelector(`input[name="monitoringDateDeleted_${fieldsetIndex}"]`);
+        const reasonTextarea = deletionDetailsDiv.querySelector(`textarea[name="monitoringReasonForDeletion_${fieldsetIndex}"]`);
+
+        if (selectElement.value === 'Yes') {
+            deletionDetailsDiv.classList.remove('hidden-field');
+            dateInput.setAttribute('required', 'true');
+            reasonTextarea.setAttribute('required', 'true');
+        } else {
+            deletionDetailsDiv.classList.add('hidden-field');
+            dateInput.removeAttribute('required');
+            reasonTextarea.removeAttribute('required');
+            dateInput.value = '';
+            reasonTextarea.value = '';
+        }
+    }
+
+
+    function updateCompanyTotalParticipants(inputElement, type, fieldsetIndex, rowIndex) {
+      const maleInput = document.querySelector(`[name="companyTable_${type}_${fieldsetIndex}_maleParticipants_${rowIndex}"]`);
+      const femaleInput = document.querySelector(`[name="companyTable_${type}_${fieldsetIndex}_femaleParticipants_${rowIndex}"]`);
+      const totalInput = document.querySelector(`[name="companyTable_${type}_${fieldsetIndex}_totalParticipants_${rowIndex}"]`);
+
+      const male = parseInt(maleInput.value) || 0;
+      const female = parseInt(femaleInput.value) || 0;
+      totalInput.value = male + female;
+    }
+
+    // Function to populate the Company Name dropdowns
+    function loadCompanies(selectElement) {
+        // In a real scenario, this would call google.script.run to get data from your sheet
+        // Example: google.script.run.withSuccessHandler(function(companies) {
+        //              companies.forEach(company => {
+        //                  selectElement.add(new Option(company, company));
+        //              });
+        //          }).getCompanies();
+
+        // For now, using mock data
+        selectElement.innerHTML = '<option value="">Select Company</option>';
+        MOCK_COMPANIES.forEach(company => {
+            selectElement.add(new Option(company, company));
+        });
+    }
+
+    // Function to populate LMC Name dropdown based on selected Company Name
+    // This function now handles both table rows (preFacilitation/enhancement) and direct fields (monitoring)
+    function loadLMCsForCompany(companySelectElement, type, fieldsetIndex, rowIndex = null) {
+        const selectedCompany = companySelectElement.value;
+        let lmcSelectElement;
+
+        if (rowIndex !== null) { // For table rows
+            lmcSelectElement = document.querySelector(`select[name="companyTable_${type}_${fieldsetIndex}_lmcName_${rowIndex}"]`);
+        } else { // For direct fields (like monitoring)
+            lmcSelectElement = document.querySelector(`select[name="${type}LmcName_${fieldsetIndex}"]`);
+        }
+        
+        lmcSelectElement.innerHTML = '<option value="">Select LMC</option>'; // Clear existing options
+
+        if (selectedCompany) {
+            // In a real scenario, this would call google.script.run to get dependent LMCs
+            // Example: google.script.run.withSuccessHandler(function(lmcs) {
+            //              lmcs.forEach(lmc => {
+            //                  lmcSelectElement.add(new Option(lmc, lmc));
+            //              });
+            //          }).getLMCsByCompany(selectedCompany);
+
+            // For now, using mock data
+            const lmcs = MOCK_COMPANY_LMC_DATA[selectedCompany] || [];
+            lmcs.forEach(lmc => {
+                lmcSelectElement.add(new Option(lmc, lmc));
+            });
+        }
+        // After LMC is loaded (or cleared), attempt to autofill other details
+        if (type === 'monitoring') {
+            autofillMonitoringCompanyDetails(selectedCompany, lmcSelectElement.value, fieldsetIndex);
+        }
+    }
+
+    // New function to autofill monitoring-specific company details
+    function autofillMonitoringCompanyDetails(companyName, lmcName, fieldsetIndex) {
+        const companyDetails = MOCK_FULL_COMPANY_DETAILS[companyName] ? MOCK_FULL_COMPANY_DETAILS[companyName][lmcName] : null;
+
+        const categorySelect = document.getElementById(`monitoringCategory_${fieldsetIndex}`);
+        const acronymInput = document.getElementById(`monitoringAcronym_${fieldsetIndex}`);
+        const filedCaseSelect = document.getElementById(`monitoringFiledCase_${fieldsetIndex}`);
+        const filedRFADropdown = document.getElementById(`monitoringFiledRFA_${fieldsetIndex}`);
+        
+        const buildingInput = document.getElementById(`monitoringBuilding_${fieldsetIndex}`);
+        const streetInput = document.getElementById(`monitoringStreet_${fieldsetIndex}`);
+        const barangayInput = document.getElementById(`monitoringBarangay_${fieldsetIndex}`);
+        const municipalityInput = document.getElementById(`monitoringMunicipality_${fieldsetIndex}`);
+        const provinceInput = document.getElementById(`monitoringProvince_${fieldsetIndex}`);
+        const ecozoneSelect = document.getElementById(`monitoringEcozone_${fieldsetIndex}`);
+
+        const sectionSelect = document.getElementById(`monitoringIndustrySection_${fieldsetIndex}`);
+        const divisionSelect = document.getElementById(`monitoringIndustryDivision_${fieldsetIndex}`);
+        const groupSelect = document.getElementById(`monitoringIndustryGroup_${fieldsetIndex}`);
+        const classSelect = document.getElementById(`monitoringIndustryClass_${fieldsetIndex}`);
+        const subclassSelect = document.getElementById(`monitoringIndustrySubclass_${fieldsetIndex}`);
+
+
+        if (companyDetails) {
+            // Autofill company details
+            populateSelect(categorySelect, ['Organized', 'Unorganized'], companyDetails.category);
+            acronymInput.value = companyDetails.acronym || '';
+            populateSelect(filedCaseSelect, ['Yes', 'No'], companyDetails.filedCase);
+            populateSelect(filedRFADropdown, ['Yes', 'No'], companyDetails.filedRFA);
+
+            // Autofill address details
+            buildingInput.value = companyDetails.address.building || '';
+            streetInput.value = companyDetails.address.street || '';
+            barangayInput.value = companyDetails.address.barangay || '';
+            municipalityInput.value = companyDetails.address.municipality || '';
+            provinceInput.value = companyDetails.address.province || '';
+            populateSelect(ecozoneSelect, ['Yes', 'No'], companyDetails.address.ecozone);
+
+            // Autofill industry details
+            populateSelect(sectionSelect, Object.keys(industryData), companyDetails.industry.section);
+            // After setting section, trigger updates for dependent dropdowns
+            updateIndustryDropdowns(fieldsetIndex, 'monitoring'); // This will cascade populate based on section
+            // Now, explicitly set the remaining values, ensuring they are valid options after cascading
+            populateSelect(divisionSelect, Object.keys(industryData[companyDetails.industry.section] || {}), companyDetails.industry.division);
+            populateSelect(groupSelect, Object.keys(industryData[companyDetails.industry.section]?.[companyDetails.industry.division] || {}), companyDetails.industry.group);
+            populateSelect(classSelect, Object.keys(industryData[companyDetails.industry.section]?.[companyDetails.industry.division]?.[companyDetails.industry.group] || {}), companyDetails.industry.class);
+            populateSelect(subclassSelect, industryData[companyDetails.industry.section]?.[companyDetails.industry.division]?.[companyDetails.industry.group]?.[companyDetails.industry.class] || [], companyDetails.industry.subclass);
+
+
+            // In a real Apps Script scenario:
+            // google.script.run.withSuccessHandler(function(details) {
+            //   // Populate fields with `details` object
+            // }).getCompanyFullDetails(companyName, lmcName);
+
+        } else {
+            // Clear fields if no details found or LMC is not selected
+            categorySelect.value = '';
+            acronymInput.value = '';
+            filedCaseSelect.value = '';
+            filedRFADropdown.value = '';
+
+            buildingInput.value = '';
+            streetInput.value = '';
+            barangayInput.value = '';
+            municipalityInput.value = '';
+            provinceInput.value = '';
+            ecozoneSelect.value = '';
+
+            populateSelect(sectionSelect, Object.keys(industryData)); // Repopulate initial section
+            populateSelect(divisionSelect, []);
+            populateSelect(groupSelect, []);
+            populateSelect(classSelect, []);
+            populateSelect(subclassSelect, []);
+        }
+    }
+
+
+    function addPreFacilitationActivityInstance() {
+      const container = document.getElementById('activityFieldsContainer');
+      const newFieldsetContainer = document.createElement('div');
+      newFieldsetContainer.innerHTML = generatePreFacilitationFields(preFacilitationActivityCount);
+      
+      // Append the new fieldset container to the main container
+      container.appendChild(newFieldsetContainer);
+      
+      // Move the "Add New Pre-Facilitation Activity" button to the end AFTER adding the new fieldset
+      // This ensures new fieldsets appear before the "Add New" button
+      const addButton = container.querySelector('.add-activity-instance-btn');
+      if (addButton && addButton.parentNode === container) { // Check if button exists and is a direct child
+          container.appendChild(addButton); // Moves the button to the very end
+      }
+      
+      // Manually add the first company row after the fieldset is added to the DOM
+      // Pass 'preFacilitation' as type to addCompanyTableRow
+      addCompanyTableRow(`companyTable_preFacilitation_${preFacilitationActivityCount}`, 'preFacilitation', preFacilitationActivityCount);
+      preFacilitationActivityCount++;
+    }
+
+    function addEnhancementActivityInstance() {
+      const container = document.getElementById('activityFieldsContainer');
+      const newFieldsetContainer = document.createElement('div');
+      newFieldsetContainer.innerHTML = generateEnhancementFields(enhancementActivityCount);
+      
+      container.appendChild(newFieldsetContainer);
+
+      const addButton = container.querySelector('.add-activity-instance-btn');
+      if (addButton && addButton.parentNode === container) { 
+          container.appendChild(addButton); 
+      }
+      
+      // Manually add the first company row for enhancement activity
+      // Pass 'enhancement' as type to addCompanyTableRow
+      addCompanyTableRow(`companyTable_enhancement_${enhancementActivityCount}`, 'enhancement', enhancementActivityCount);
+      enhancementActivityCount++;
+    }
+
+    function addMonitoringActivityInstance() {
+      const container = document.getElementById('activityFieldsContainer');
+      const newFieldsetContainer = document.createElement('div');
+      newFieldsetContainer.innerHTML = generateMonitoringFields(monitoringActivityCount);
+      
+      container.appendChild(newFieldsetContainer);
+
+      const addButton = container.querySelector('.add-activity-instance-btn');
+      if (addButton && addButton.parentNode === container) { 
+          container.appendChild(addButton); 
+      }
+      
+      // Manually populate the company dropdown for the newly added monitoring section
+      const companySelect = newFieldsetContainer.querySelector(`select[name="monitoringCompanyName_${monitoringActivityCount}"]`);
+      if (companySelect) {
+          loadCompanies(companySelect);
+      }
+
+      monitoringActivityCount++;
+    }
+
+    function removeRow(button) {
+      const row = button.closest('tr');
+      if (row) {
+        row.remove();
+      } else {
+        // If it's not a table row, it must be a fieldset (main activity instance)
+        // Find the div that contains the fieldset and remove it
+        button.closest('.activity-fieldset').parentElement.remove();
+      }
+    }
+
+
+    function displayActivityFields() {
+      const selectedActivity = document.getElementById('activityTypeSelect').value;
+      const container = document.getElementById('activityFieldsContainer');
+      container.innerHTML = ''; // Clear previous fields
+      preFacilitationActivityCount = 0; // Reset counter when main activity type changes
+      enhancementActivityCount = 0; // Reset counter for enhancement activities
+      monitoringActivityCount = 0; // Reset counter for monitoring activities
+
+      if (selectedActivity === 'PRE-FACILITATION ACTIVITY') {
+        // Add the button to add more instances first (it will be moved by addPreFacilitationActivityInstance)
+        const addButton = document.createElement('button');
+        addButton.type = 'button';
+        addButton.className = 'add-activity-instance-btn';
+        addButton.textContent = 'Add New Pre-Facilitation Activity';
+        addButton.onclick = addPreFacilitationActivityInstance;
+        container.appendChild(addButton);
+
+        // Automatically add the first instance when selected
+        addPreFacilitationActivityInstance();
+
+
+      } else if (selectedActivity === 'FACILITATION ACTIVITY') {
+        container.innerHTML = `
+          <fieldset class="activity-fieldset">
+            <legend>FACILITATION ACTIVITY Details</legend>
+            <p>Fields for FACILITATION ACTIVITY will go here. (Under construction)</p>
+          </fieldset>
+        `;
+      } else if (selectedActivity === 'ENHANCEMENT ACTIVITY') {
+        // Add the button to add more instances for enhancement activity
+        const addButton = document.createElement('button');
+        addButton.type = 'button';
+        addButton.className = 'add-activity-instance-btn';
+        addButton.textContent = 'Add New Enhancement Activity';
+        addButton.onclick = addEnhancementActivityInstance;
+        container.appendChild(addButton);
+
+        // Automatically add the first instance when selected
+        addEnhancementActivityInstance();
+
+      } else if (selectedActivity === 'MONITORING ACTIVITY') {
+        // Add the button to add more instances for monitoring activity
+        const addButton = document.createElement('button');
+        addButton.type = 'button';
+        addButton.className = 'add-activity-instance-btn';
+        addButton.textContent = 'Add New Monitoring Activity';
+        addButton.onclick = addMonitoringActivityInstance;
+        container.appendChild(addButton);
+
+        // Automatically add the first instance when selected
+        addMonitoringActivityInstance();
+      }
+    }
+
+    function handleSubmit(event) {
+      event.preventDefault();
+      document.getElementById("loadingOverlay").style.display = "flex";
+      // Simulate a delay for submission
+      setTimeout(() => {
+        document.getElementById("loadingOverlay").style.display = "none";
+        alert("Form submitted successfully!");
+        // document.getElementById("activityForm").reset();
+      }, 2000);
+    }
+  </script>
+</body>
+</html>
