@@ -7,7 +7,7 @@
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      background-color: #f8f8f8;
+      background-color: #f8f8f8; /* Reverted background color to light gray */
     }
     h2 {
       margin-top: 5px;
@@ -25,7 +25,7 @@
     }
     h4 {
       margin-bottom: 0;
-      font-weight:normal;
+      font-weight:bold;
     }
     .form-group {
       margin-top: 5px;
@@ -37,6 +37,10 @@
     .form-group label {
       margin-bottom: 4px;
       font-weight: lighter;
+    }
+    /* New style for bold labels */
+    .bold-label {
+        font-weight: bold !important; /* !important to override .form-group label */
     }
     input[type="text"], input[type="number"], select, textarea, input[type="email"] {
       padding: 6px;
@@ -71,12 +75,26 @@
     .ownership-input {
       flex: 4; /* Gives more space to this input */
     }
-    .checkbox-row {
+    .checkbox-row, .radio-row { /* Added .radio-row */
       display: flex;
       gap: 20px;
       align-items: center;
       margin-bottom: 20px;
       flex-wrap: wrap;
+    }
+    .other-convergence-input, .partnership-input {
+      margin-left: 20px; /* Indent the text area for "Other" */
+      flex: 1; /* Allow it to take up available space */
+      max-width: 200px; /* Ensure it stays short */
+    }
+    /* Removed .partnership-options specific styles as it's no longer a hidden container */
+    .partnership-option-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-left: 20px; /* Indent options under Partnership heading */
+        margin-bottom: 10px; /* Space between partnership options */
     }
     button {
       margin-top: 20px;
@@ -93,7 +111,7 @@
     button:hover {
       background-color: #0056b3;
     }
-    #loadingOverlay, #confirmationOverlay {
+    #loadingOverlay {
       display: none;
       position: fixed;
       top: 0;
@@ -142,6 +160,7 @@
         padding: 10px;
         border: 1px solid #ccc;
         background-color: #f2f2f2;
+        position: relative; /* Needed for absolute positioning of remove button */
     }
     .activity-fieldset legend {
         font-weight: bold;
@@ -161,61 +180,119 @@
         background-color: #218838;
     }
 
-    /* Styles for the new company table (Pre-Facilitation, Enhancement) */
-    .company-table {
+    /* Base styles for tables (can be overridden by specific classes) */
+    .company-table, .lmc-project-table, .issues-addressed-table, .pre-facilitation-discussion-table, .enhancement-discussion-table {
         width: 100%;
         border-collapse: collapse;
         margin-top: 15px;
     }
-    .company-table th, .company-table td {
+    .company-table th, .company-table td,
+    .lmc-project-table th, .lmc-project-table td,
+    .issues-addressed-table th, .issues-addressed-table td,
+    .pre-facilitation-discussion-table th, .pre-facilitation-discussion-table td,
+    .enhancement-discussion-table th, .enhancement-discussion-table td {
         border: 1px solid #ddd;
         padding: 8px;
         vertical-align: top;
         text-align: left;
     }
-    /* Center align table headers */
+    /* Default bold for these tables */
     .company-table th {
-        text-align: center; /* This is the key change */
+        text-align: center;
+        font-weight: bold;
     }
-    .company-table input[type="text"],
-    .company-table select,
-    .company-table input[type="number"] {
+    /* Specific overrides for Discussion Details and Participating Companies tables (unbolded) */
+    .pre-facilitation-discussion-table th,
+    .enhancement-discussion-table th,
+    .company-table.pre-facilitation-company-table th,
+    .company-table.enhancement-company-table th {
+        text-align: center;
+        font-weight: normal;
+    }
+    /* Specific overrides for LMC Projects Implemented and Issues Addressed tables (unbolded) */
+    .lmc-project-table th,
+    .issues-addressed-table th {
+        text-align: center;
+        font-weight: normal;
+    }
+
+
+    .company-table input[type="text"], .company-table select, .company-table input[type="number"],
+    .lmc-project-table input[type="text"], .lmc-project-table input[type="date"], .lmc-project-table textarea,
+    .issues-addressed-table input[type="text"], .issues-addressed-table input[type="date"],
+    .pre-facilitation-discussion-table input[type="text"], .pre-facilitation-discussion-table select, .pre-facilitation-discussion-table textarea,
+    .enhancement-discussion-table input[type="text"], .enhancement-discussion-table select, .enhancement-discussion-table textarea {
         width: 100%;
         box-sizing: border-box;
         padding: 6px;
         border-radius: 4px;
         border: 1px solid #ccc;
     }
-    .company-table textarea {
-        width: 100%;
-        box-sizing: border-box;
-        padding: 6px;
-        border-radius: 4px;
-        border: 1px solid #ccc;
+    .company-table textarea,
+    .lmc-project-table textarea,
+    .issues-addressed-table textarea,
+    .pre-facilitation-discussion-table textarea,
+    .enhancement-discussion-table textarea {
         resize: vertical;
-        min-height: 30px; /* Give it some minimum height */
+        min-height: 30px;
     }
-    .company-table td.remove-cell {
+    .company-table td.remove-cell,
+    .lmc-project-table td.remove-cell,
+    .issues-addressed-table td.remove-cell,
+    .pre-facilitation-discussion-table td.remove-cell,
+    .enhancement-discussion-table td.remove-cell {
       text-align: center;
       vertical-align: middle;
       padding: 0;
     }
-    .company-table td.remove-cell button {
+    .company-table td.remove-cell button,
+    .lmc-project-table td.remove-cell button,
+    .issues-addressed-table td.remove-cell button,
+    .pre-facilitation-discussion-table td.remove-cell button,
+    .enhancement-discussion-table td.remove-cell button {
         padding: 4px 8px;
         font-size: 14px;
         margin: 0;
     }
-    /* Column widths for the new table for Pre-Facilitation and Enhancement */
-    .col-company-name { width: 15%; } /* Adjusted for LMC Name */
-    .col-lmc-name { width: 15%; } /* New LMC Name column */
-    .col-category { width: 8%; } /* Adjusted width */
-    .col-filed-case, .col-filed-rfa { width: 8%; } /* Adjusted width */
-    .company-table .col-participants-male,
-    .company-table .col-participants-female,
-    .company-table .col-participants-total {
-        width: 2%; /* Made smaller for participants, down from 3% */
-    }
-    .col-remove { width: 4%; } /* Adjusted width */
+
+    /* Column widths for Pre-Facilitation Company table */
+    .company-table.pre-facilitation-company-table .col-company-name { width: 25%; } /* Adjusted width */
+    .company-table.pre-facilitation-company-table .col-category { width: 8%; } /* Adjusted width */
+    .company-table.pre-facilitation-company-table .col-filed-case, .company-table.pre-facilitation-company-table .col-filed-rfa { width: 8%; } /* Adjusted width */
+    .company-table.pre-facilitation-company-table .col-participants-header { width: 20%; } /* Adjusted width */
+    .company-table.pre-facilitation-company-table .col-iec-materials { width: 10%; } /* New width */
+    .company-table.pre-facilitation-company-table .col-remove { width: 10%; } /* Adjusted width */
+
+    /* Column widths for Enhancement Company table */
+    .company-table.enhancement-company-table .col-company-name { width: 12%; } /* Adjusted width */
+    .company-table.enhancement-company-table .col-lmc-name { width: 12%; } /* Adjusted width */
+    .company-table.enhancement-company-table .col-category { width: 8%; } /* Adjusted width */
+    .company-table.enhancement-company-table .col-filed-case, .company-table.enhancement-company-table .col-filed-rfa { width: 8%; } /* Adjusted width */
+    .company-table.enhancement-company-table .col-participants-header { width: 20%; } /* Adjusted width */
+    .company-table.enhancement-company-table .col-iec-materials { width: 10%; } /* New width */
+    .company-table.enhancement-company-table .col-remove { width: 10%; } /* Adjusted width */
+
+    /* Column widths for Pre-Facilitation Discussion Table */
+    .pre-facilitation-discussion-table .pre-dis-col-category { width: 15%; }
+    .pre-facilitation-discussion-table .pre-dis-col-topics { width: 30%; }
+    .pre-facilitation-discussion-table .pre-dis-col-discussed-by { width: 20%; }
+    .pre-facilitation-discussion-table .pre-dis-col-details { width: 25%; }
+    .pre-facilitation-discussion-table .pre-dis-col-remove { width: 10%; }
+
+    /* Column widths for Enhancement Discussion Table */
+    .enhancement-discussion-table .enh-dis-col-category { width: 15%; }
+    .enhancement-discussion-table .enh-dis-col-topics { width: 30%; }
+    .enhancement-discussion-table .enh-dis-col-discussed-by { width: 20%; }
+    .enhancement-discussion-table .enh-dis-col-details { width: 25%; }
+    .enhancement-discussion-table .enh-dis-col-remove { width: 10%; }
+
+    /* Column widths for Monitoring LMC Projects Implemented table */
+    .lmc-project-table .col-lmc-project { width: 20%; }
+    .lmc-project-table .col-project-title { width: 25%; }
+    .lmc-project-table .col-date-implemented { width: 15%; }
+    .lmc-project-table .col-details { width: 30%; }
+    .lmc-project-table .col-action { width: 10%; }
+
 
     /* Style for the smaller, normal font weight text in table header */
     .sub-header-text {
@@ -254,49 +331,7 @@
         font-size: 1.2em; /* Ensure it's clearly a heading */
     }
 
-    /* Styles for the LMC Projects Implemented tables */
-    .lmc-project-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 5px; /* Reduced space above the table */
-      margin-bottom: 0px; /* Remove space below table */
-    }
-    .lmc-project-table th, .lmc-project-table td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      vertical-align: top;
-      text-align: left;
-    }
-    .lmc-project-table th {
-      text-align: center;
-    }
-    .lmc-project-table input[type="text"],
-    .lmc-project-table input[type="date"],
-    .lmc-project-table textarea {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 6px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      min-height: 30px;
-    }
-    .lmc-project-table td.remove-cell {
-      text-align: center;
-      vertical-align: middle;
-      padding: 0;
-    }
-    .lmc-project-table td.remove-cell button {
-        padding: 4px 8px;
-        font-size: 14px;
-        margin: 0;
-    }
-    /* Specific column widths for LMC Project tables */
-    .lmc-project-table .col-project-title { width: 30%; }
-    .lmc-project-table .col-date-implemented { width: 20%; }
-    .lmc-project-table .col-details { width: 40%; }
-    .lmc-project-table .col-action { width: 10%; }
-
-    /* New style for LMC Projects sub-section titles */
+    /* New style for LMC Projects sub-section titles (now not used for individual tables) */
     .lmc-sub-section-title {
         font-size: 1.1em; /* Slightly smaller than h3, larger than regular text */
         font-weight: bold;
@@ -316,6 +351,7 @@
       border-collapse: collapse;
       margin-top: 5px;
       margin-bottom: 0px;
+      table-layout: fixed; /* Added this line */
     }
     .issues-addressed-table th, .issues-addressed-table td {
       border: 1px solid #ddd;
@@ -347,9 +383,32 @@
     .issues-addressed-table .col-date-raised,
     .issues-addressed-table .col-date-settled,
     .issues-addressed-table .col-date-elevated,
-    .issues-addressed-table .col-date-settled-gm { width: 15%; }
-    .issues-addressed-table .col-referred-forums { width: 25%; }
+    .issues-addressed-table .col-date-settled-gm { width: 10%; }
+    .issues-addressed-table .col-referred-forums { width: 30%; }
     .issues-addressed-table .col-action { width: 10%; }
+
+    /* New CSS for smaller, italicized text in table headers */
+    .smaller-italic-text {
+        font-size: calc(1em - 2pt); /* Decrease by 2pt from current font size */
+        font-style: italic;
+    }
+
+    /* Style for the "Remove Activity" button within fieldsets */
+    .remove-activity-fieldset-btn {
+        margin-top: 15px;
+        padding: 8px 15px;
+        background-color: #dc3545; /* Red color for delete action */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        float: right; /* Float to the right to separate it */
+        clear: both; /* Clear any floats above it */
+    }
+    .remove-activity-fieldset-btn:hover {
+        background-color: #c82333;
+    }
 
 
     /* Responsive adjustments for mobile */
@@ -361,6 +420,72 @@
       .form-group, .ownership-input, .small-input-1 {
         width: 100%; /* Full width on small screens */
       }
+      .remove-activity-fieldset-btn {
+          float: none; /* Remove float on small screens */
+          width: 100%; /* Make it full width */
+          margin-left: 0;
+          margin-right: 0;
+      }
+    }
+
+    /* Custom Confirmation Modal Styles */
+    #confirmationOverlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+      z-index: 10000; /* Higher than loading overlay */
+      justify-content: center;
+      align-items: center;
+    }
+    .confirmation-modal {
+      background-color: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      animation: fadeIn 0.3s ease-out;
+    }
+    .confirmation-modal p {
+      margin-bottom: 25px;
+      font-size: 1.1em;
+      color: #333;
+    }
+    .confirmation-modal-buttons button {
+      margin: 0 10px;
+      padding: 10px 25px;
+      border-radius: 6px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+    .confirmation-modal-buttons button.yes-btn {
+      background-color: #dc3545; /* Red for "Yes" to remove */
+      color: white;
+      border: none;
+    }
+    .confirmation-modal-buttons button.yes-btn:hover {
+      background-color: #c82333;
+      transform: translateY(-1px);
+    }
+    .confirmation-modal-buttons button.no-btn {
+      background-color: #6c757d; /* Gray for "No" to cancel */
+      color: white;
+      border: none;
+    }
+    .confirmation-modal-buttons button.no-btn:hover {
+      background-color: #5a6268;
+      transform: translateY(-1px);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
     }
   </style>
 </head>
@@ -377,6 +502,7 @@
                 <option value="FACILITATION ACTIVITY">FACILITATION ACTIVITY</option>
                 <option value="ENHANCEMENT ACTIVITY">ENHANCEMENT ACTIVITY</option>
                 <option value="MONITORING ACTIVITY">MONITORING ACTIVITY</option>
+                <option value="OTHER ADVOCACY & NETWORKING ACTIVITIES">OTHER ADVOCACY & NETWORKING ACTIVITIES</option>
             </select>
         </div>
     </div>
@@ -388,23 +514,33 @@
     <button type="submit">Submit Activity</button>
   </form>
 
+  <!-- Custom Confirmation Modal -->
+  <div id="confirmationOverlay">
+    <div class="confirmation-modal">
+      <p id="confirmationMessage">Are you sure you want to remove this activity?</p>
+      <div class="confirmation-modal-buttons">
+        <button class="yes-btn" onclick="confirmRemoval()">Yes</button>
+        <button class="no-btn" onclick="cancelRemoval()">No</button>
+      </div>
+    </div>
+  </div>
+  <!---------------------------->
+
   <script>
     let preFacilitationActivityCount = 0; // Counter for PRE-FACILITATION ACTIVITY instances
     let enhancementActivityCount = 0; // Counter for ENHANCEMENT ACTIVITY instances
     let monitoringActivityCount = 0; // Counter for MONITORING ACTIVITY instances
+    let otherAdvocacyNetworkingCount = 0; // Counter for OTHER ADVOCACY & NETWORKING ACTIVITIES instances
 
     // Counters for LMC projects within monitoring activity
-    let lmcProjectRowCount_healthSafety = [];
-    let lmcProjectRowCount_livelihood = [];
-    let lmcProjectRowCount_sportsRecreation = [];
-    let lmcProjectRowCount_productivityQuality = [];
-    let lmcProjectRowCount_communityEnvironment = [];
-    let lmcProjectRowCount_genderDevelopment = [];
-    let lmcProjectRowCount_familyWelfare = [];
-    let lmcProjectRowCount_grievanceMachinery = [];
+    let monitoringLmcProjectRowCount = []; // New single counter for LMC Projects Implemented table
     // New counter for Issues Addressed table
     let issuesAddressedRowCount = [];
+    // New counters for Discussion tables
+    let preFacilitationDiscussionRowCount = [];
+    let enhancementDiscussionRowCount = [];
 
+    let elementToRemove = null; // Variable to store the element to be removed
 
     // Mock data for demonstration purposes. In a real scenario, this would come from Google Apps Script.
     // Structure: { companyName: [LMC1, LMC2, ...], ... }
@@ -532,7 +668,6 @@
       }
     };
 
-    // Generic populate function (reused from company_entry_form)
     function populateSelect(selectElement, items, selectedValue = '') {
       selectElement.innerHTML = `<option value="">Select...</option>`;
       items.forEach(i => {
@@ -544,7 +679,6 @@
       });
     }
 
-    // Function to update industry dropdowns for a specific monitoring fieldset
     function updateIndustryDropdowns(fieldsetIndex, type) {
       const sectionSelect = document.getElementById(`${type}IndustrySection_${fieldsetIndex}`);
       const divisionSelect = document.getElementById(`${type}IndustryDivision_${fieldsetIndex}`);
@@ -582,10 +716,43 @@
       }
     }
 
+    function toggleInputFieldVisibility(checkboxId, inputId) {
+        const checkbox = document.getElementById(checkboxId);
+        const inputField = document.getElementById(inputId);
+        if (checkbox && inputField) {
+            if (checkbox.checked) {
+                inputField.classList.remove('hidden-field');
+                inputField.setAttribute('required', 'true');
+            } else {
+                inputField.classList.add('hidden-field');
+                inputField.removeAttribute('required');
+                inputField.value = ''; // Clear the value when hidden
+            }
+        }
+    }
+
+    function toggleContainerVisibility(checkboxId, containerId) {
+        const checkbox = document.getElementById(checkboxId);
+        const container = document.getElementById(containerId);
+        if (checkbox && container) {
+            if (checkbox.checked) {
+                container.classList.remove('hidden-field');
+            } else {
+                container.classList.add('hidden-field');
+                container.querySelectorAll('input[type="checkbox"]').forEach(subCheckbox => {
+                    if (subCheckbox.checked) {
+                        subCheckbox.checked = false;
+                        const associatedInputId = subCheckbox.id.replace('Checkbox', 'Text');
+                        toggleInputFieldVisibility(subCheckbox.id, associatedInputId);
+                    }
+                });
+            }
+        }
+    }
 
     function generatePreFacilitationFields(fieldsetIndex) {
-      // Initialize row count for the company table within this fieldset
       window[`companyTableRowCount_preFacilitation_${fieldsetIndex}`] = 0;
+      preFacilitationDiscussionRowCount[fieldsetIndex] = 0;
 
       return `
         <fieldset class="activity-fieldset">
@@ -613,26 +780,68 @@
                   </div>
               </div>
           </div>
+          <h4>Mode</h4>
+          <div class="radio-row">
+            <label><input type="radio" name="preFacilitationMode_${fieldsetIndex}" value="Face-to-Face" required> Face-to-Face</label>
+            <label><input type="radio" name="preFacilitationMode_${fieldsetIndex}" value="Online"> Online</label>
+            <label><input type="radio" name="preFacilitationMode_${fieldsetIndex}" value="Hybrid"> Hybrid</label>
+          </div>
           <h4>Convergence</h4>
           <div class="checkbox-row">
             <label><input type="checkbox" name="preFacilitationConvergenceNWPC_${fieldsetIndex}"> NWPC/RTWPB</label>
             <label><input type="checkbox" name="preFacilitationConvergenceOSHC_${fieldsetIndex}"> ECC/OSHC</label>
             <label><input type="checkbox" name="preFacilitationConvergenceDOLE_${fieldsetIndex}"> DOLE-RO</label>
+            <label><input type="checkbox" name="preFacilitationConvergencePRC_${fieldsetIndex}"> PRC</label>
+            <label><input type="checkbox" name="preFacilitationConvergenceTESDA_${fieldsetIndex}"> TESDA</label>
+            <label><input type="checkbox" name="preFacilitationConvergenceNLRC_${fieldsetIndex}"> NLRC</label>
+            <label><input type="checkbox" name="preFacilitationConvergenceBWC_${fieldsetIndex}"> BWC</label>
+            <label><input type="checkbox" name="preFacilitationConvergenceBLR_${fieldsetIndex}"> BLR</label>
+            <label><input type="checkbox" id="preFacilitationConvergenceOtherCheckbox_${fieldsetIndex}" name="preFacilitationConvergenceOtherCheckbox_${fieldsetIndex}" onchange="toggleInputFieldVisibility('preFacilitationConvergenceOtherCheckbox_${fieldsetIndex}', 'preFacilitationConvergenceOtherText_${fieldsetIndex}')"> Other</label>
+            <input type="text" id="preFacilitationConvergenceOtherText_${fieldsetIndex}" name="preFacilitationConvergenceOtherText_${fieldsetIndex}" class="other-convergence-input hidden-field" placeholder="Specify Other">
           </div>
+
+          <h4>Partnership</h4>
+          <div class="partnership-option-row">
+            <label><input type="checkbox" id="preFacilitationPartnershipRegionalLMC_${fieldsetIndex}" name="preFacilitationPartnershipRegionalLMC_${fieldsetIndex}" onchange="toggleInputFieldVisibility('preFacilitationPartnershipRegionalLMC_${fieldsetIndex}', 'preFacilitationPartnershipRegionalLMCText_${fieldsetIndex}')"> Regional LMC Association</label>
+            <input type="text" id="preFacilitationPartnershipRegionalLMCText_${fieldsetIndex}" name="preFacilitationPartnershipRegionalLMCText_${fieldsetIndex}" class="partnership-input hidden-field" placeholder="Specify Regional LMC Assoc.">
+          </div>
+          <div class="partnership-option-row">
+            <label><input type="checkbox" id="preFacilitationPartnershipOtherSocialPartnersCheckbox_${fieldsetIndex}" name="preFacilitationPartnershipOtherSocialPartnersCheckbox_${fieldsetIndex}" onchange="toggleInputFieldVisibility('preFacilitationPartnershipOtherSocialPartnersCheckbox_${fieldsetIndex}', 'preFacilitationPartnershipOtherSocialPartnersText_${fieldsetIndex}')"> Other Social Partners/Industry Group</label>
+            <input type="text" id="preFacilitationPartnershipOtherSocialPartnersText_${fieldsetIndex}" name="preFacilitationPartnershipOtherSocialPartnersText_${fieldsetIndex}" class="partnership-input hidden-field" placeholder="Specify Other Social Partners">
+          </div>
+
           <div class="form-group">
-            <label>Details</label>
+            <label class="bold-label">Details</label>
             <textarea name="preFacilitationDetails_${fieldsetIndex}" rows="4" placeholder="Enter details..."></textarea>
           </div>
 
+          <h3>Discussion Details</h3>
+          <table class="pre-facilitation-discussion-table" id="discussionTable_preFacilitation_${fieldsetIndex}">
+            <thead>
+              <tr>
+                <th class="pre-dis-col-category">Topic Category</th>
+                <th class="pre-dis-col-topics">Topic/s Discussed</th>
+                <th class="pre-dis-col-discussed-by">Discussed by</th>
+                <th class="pre-dis-col-details">Details</th>
+                <th class="pre-dis-col-remove">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rows added dynamically -->
+            </tbody>
+          </table>
+          <button type="button" class="add-activity-instance-btn" onclick="addDiscussionTableRow('discussionTable_preFacilitation_${fieldsetIndex}', 'preFacilitation', ${fieldsetIndex})">Add Row</button>
+
           <h3>Participating Companies</h3>
-          <table class="company-table" id="companyTable_preFacilitation_${fieldsetIndex}">
+          <table class="company-table pre-facilitation-company-table" id="companyTable_preFacilitation_${fieldsetIndex}">
             <thead>
               <tr>
                 <th class="col-company-name">Company Name</th>
                 <th class="col-category">Category</th>
                 <th class="col-filed-case">With Filed Case?</th>
                 <th class="col-filed-rfa">With Filed RFA?</th>
-                <th colspan="3">No. of Participants<br><span class="sub-header-text">(Male / Female / Total)</span></th>
+                <th colspan="3" class="col-participants-header">No. of Participants<br><span class="sub-header-text">(Male / Female / Total)</span></th>
+                <th class="col-iec-materials">No. of IEC Materials Provided</th>
                 <th class="col-remove">Action</th>
               </tr>
             </thead>
@@ -641,14 +850,14 @@
             </tbody>
           </table>
           <button type="button" class="add-activity-instance-btn" onclick="addCompanyTableRow('companyTable_preFacilitation_${fieldsetIndex}', 'preFacilitation', ${fieldsetIndex})">Add Company</button>
-          <button type="button" class="remove-activity-fieldset-btn" onclick="removeRow(this)">Remove Activity</button>
+          <button type="button" class="remove-activity-fieldset-btn" onclick="showConfirmationModal(this)">Remove Activity</button>
         </fieldset>
       `;
     }
 
     function generateEnhancementFields(fieldsetIndex) {
-      // Initialize row count for the company table within this fieldset (if applicable)
       window[`companyTableRowCount_enhancement_${fieldsetIndex}`] = 0;
+      enhancementDiscussionRowCount[fieldsetIndex] = 0;
 
       return `
         <fieldset class="activity-fieldset">
@@ -676,19 +885,67 @@
                   </div>
               </div>
           </div>
+          <div class="row">
+              <div class="form-group" style="flex-direction: row; align-items: center; gap: 10px;">
+                  <label style="margin-bottom: 0; font-weight: bold;">Cascaded with basic concepts of productivity in SMEs?</label>
+                  <label><input type="radio" name="enhancementCascadedSME_${fieldsetIndex}" value="Yes" required> Yes</label>
+                  <label><input type="radio" name="enhancementCascadedSME_${fieldsetIndex}" value="No"> No</label>
+              </div>
+          </div>
+          <h4>Mode</h4>
+          <div class="radio-row">
+            <label><input type="radio" name="enhancementMode_${fieldsetIndex}" value="Face-to-Face" required> Face-to-Face</label>
+            <label><input type="radio" name="enhancementMode_${fieldsetIndex}" value="Online"> Online</label>
+            <label><input type="radio" name="enhancementMode_${fieldsetIndex}" value="Hybrid"> Hybrid</label>
+          </div>
           <h4>Convergence</h4>
           <div class="checkbox-row">
             <label><input type="checkbox" name="enhancementConvergenceNWPC_${fieldsetIndex}"> NWPC/RTWPB</label>
             <label><input type="checkbox" name="enhancementConvergenceOSHC_${fieldsetIndex}"> ECC/OSHC</label>
             <label><input type="checkbox" name="enhancementConvergenceDOLE_${fieldsetIndex}"> DOLE-RO</label>
+            <label><input type="checkbox" name="enhancementConvergencePRC_${fieldsetIndex}"> PRC</label>
+            <label><input type="checkbox" name="enhancementConvergenceTESDA_${fieldsetIndex}"> TESDA</label>
+            <label><input type="checkbox" name="enhancementConvergenceNLRC_${fieldsetIndex}"> NLRC</label>
+            <label><input type="checkbox" name="enhancementConvergenceBWC_${fieldsetIndex}"> BWC</label>
+            <label><input type="checkbox" name="enhancementConvergenceBLR_${fieldsetIndex}"> BLR</label>
+            <label><input type="checkbox" id="enhancementConvergenceOtherCheckbox_${fieldsetIndex}" name="enhancementConvergenceOtherCheckbox_${fieldsetIndex}" onchange="toggleInputFieldVisibility('enhancementConvergenceOtherCheckbox_${fieldsetIndex}', 'enhancementConvergenceOtherText_${fieldsetIndex}')"> Other</label>
+            <input type="text" id="enhancementConvergenceOtherText_${fieldsetIndex}" name="enhancementConvergenceOtherText_${fieldsetIndex}" class="other-convergence-input hidden-field" placeholder="Specify Other">
           </div>
+
+          <h4>Partnership</h4>
+          <div class="partnership-option-row">
+            <label><input type="checkbox" id="enhancementPartnershipRegionalLMC_${fieldsetIndex}" name="enhancementPartnershipRegionalLMC_${fieldsetIndex}" onchange="toggleInputFieldVisibility('enhancementPartnershipRegionalLMC_${fieldsetIndex}', 'enhancementPartnershipRegionalLMCText_${fieldsetIndex}')"> Regional LMC Association</label>
+            <input type="text" id="enhancementPartnershipRegionalLMCText_${fieldsetIndex}" name="enhancementPartnershipRegionalLMCText_${fieldsetIndex}" class="partnership-input hidden-field" placeholder="Specify Regional LMC Assoc.">
+          </div>
+          <div class="partnership-option-row">
+            <label><input type="checkbox" id="enhancementPartnershipOtherSocialPartnersCheckbox_${fieldsetIndex}" name="enhancementPartnershipOtherSocialPartnersCheckbox_${fieldsetIndex}" onchange="toggleInputFieldVisibility('enhancementPartnershipOtherSocialPartnersCheckbox_${fieldsetIndex}', 'enhancementPartnershipOtherSocialPartnersText_${fieldsetIndex}')"> Other Social Partners/Industry Group</label>
+            <input type="text" id="enhancementPartnershipOtherSocialPartnersText_${fieldsetIndex}" name="enhancementPartnershipOtherSocialPartnersText_${fieldsetIndex}" class="partnership-input hidden-field" placeholder="Specify Other Social Partners">
+          </div>
+
           <div class="form-group">
-            <label>Details</label>
+            <label class="bold-label">Details</label>
             <textarea name="enhancementDetails_${fieldsetIndex}" rows="4" placeholder="Enter details..."></textarea>
           </div>
 
+          <h3>Discussion Details</h3>
+          <table class="enhancement-discussion-table" id="discussionTable_enhancement_${fieldsetIndex}">
+            <thead>
+              <tr>
+                <th class="enh-dis-col-category">Topic Category</th>
+                <th class="enh-dis-col-topics">Topic/s Discussed</th>
+                <th class="enh-dis-col-discussed-by">Discussed by</th>
+                <th class="enh-dis-col-details">Details</th>
+                <th class="enh-dis-col-remove">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rows added dynamically -->
+            </tbody>
+          </table>
+          <button type="button" class="add-activity-instance-btn" onclick="addDiscussionTableRow('discussionTable_enhancement_${fieldsetIndex}', 'enhancement', ${fieldsetIndex})">Add Row</button>
+
           <h3>Participating Companies</h3>
-          <table class="company-table" id="companyTable_enhancement_${fieldsetIndex}">
+          <table class="company-table enhancement-company-table" id="companyTable_enhancement_${fieldsetIndex}">
             <thead>
               <tr>
                 <th class="col-company-name">Company Name</th>
@@ -696,7 +953,8 @@
                 <th class="col-category">Category</th>
                 <th class="col-filed-case">With Filed Case?</th>
                 <th class="col-filed-rfa">With Filed RFA?</th>
-                <th colspan="3">No. of Participants<br><span class="sub-header-text">(Male / Female / Total)</span></th>
+                <th colspan="3" class="col-participants-header">No. of Participants<br><span class="sub-header-text">(Male / Female / Total)</span></th>
+                <th class="col-iec-materials">No. of IEC Materials Provided</th>
                 <th class="col-remove">Action</th>
               </tr>
             </thead>
@@ -705,22 +963,14 @@
             </tbody>
           </table>
           <button type="button" class="add-activity-instance-btn" onclick="addCompanyTableRow('companyTable_enhancement_${fieldsetIndex}', 'enhancement', ${fieldsetIndex})">Add Company</button>
-          <button type="button" class="remove-activity-fieldset-btn" onclick="removeRow(this)">Remove Activity</button>
+          <button type="button" class="remove-activity-fieldset-btn" onclick="showConfirmationModal(this)">Remove Activity</button>
         </fieldset>
       `;
     }
 
     function generateMonitoringFields(fieldsetIndex) {
-      // Initialize LMC project row counts for this monitoring instance
-      lmcProjectRowCount_healthSafety[fieldsetIndex] = 0;
-      lmcProjectRowCount_livelihood[fieldsetIndex] = 0;
-      lmcProjectRowCount_sportsRecreation[fieldsetIndex] = 0;
-      lmcProjectRowCount_productivityQuality[fieldsetIndex] = 0;
-      lmcProjectRowCount_communityEnvironment[fieldsetIndex] = 0;
-      lmcProjectRowCount_genderDevelopment[fieldsetIndex] = 0;
-      lmcProjectRowCount_familyWelfare[fieldsetIndex] = 0;
-      lmcProjectRowCount_grievanceMachinery[fieldsetIndex] = 0;
-      issuesAddressedRowCount[fieldsetIndex] = 0; // Initialize counter for Issues Addressed
+      monitoringLmcProjectRowCount[fieldsetIndex] = 0;
+      issuesAddressedRowCount[fieldsetIndex] = 0;
 
       return `
         <fieldset class="activity-fieldset">
@@ -750,15 +1000,16 @@
             <label for="monitoringAssistance_${fieldsetIndex}">Assistance/Solutions rendered by the RB</label>
             <textarea id="monitoringAssistance_${fieldsetIndex}" name="monitoringAssistance_${fieldsetIndex}" rows="3" placeholder="Enter assistance/solutions..."></textarea>
           </div>
-          <div class="form-group">
-            <label for="monitoringDeleted_${fieldsetIndex}">Deleted</label>
-            <select id="monitoringDeleted_${fieldsetIndex}" name="monitoringDeleted_${fieldsetIndex}" onchange="toggleDeletionFieldsMonitoring(this, ${fieldsetIndex})" required>
-              <option value="">Select</option>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
+
+          <h4>Type of Monitoring</h4>
+          <div class="checkbox-row">
+            <label><input type="checkbox" name="monitoringFacilitation_${fieldsetIndex}"> Facilitation</label>
+            <label><input type="checkbox" name="monitoringPartnering_${fieldsetIndex}"> Partnering</label>
+            <label><input type="checkbox" name="monitoringCooperativeProblemSolving_${fieldsetIndex}"> Cooperative Problem Solving</label>
+            <label><input type="checkbox" name="monitoringLMCsWithCSR_${fieldsetIndex}"> LMCs with CSR</label>
+            <label><input type="checkbox" id="monitoringDelistedInactiveCheckbox_${fieldsetIndex}" name="monitoringDelistedInactive_${fieldsetIndex}" onchange="toggleDelistedInactiveFields(this, ${fieldsetIndex})"> Delisted/ Inactive</label>
           </div>
-          <div id="monitoringDeletionDetails_${fieldsetIndex}" class="deletion-details hidden-field">
+          <div id="monitoringDelistedInactiveDetails_${fieldsetIndex}" class="deletion-details hidden-field">
             <div class="form-group">
                 <label for="monitoringDateDeleted_${fieldsetIndex}">Date Deleted</label>
                 <input type="date" id="monitoringDateDeleted_${fieldsetIndex}" name="monitoringDateDeleted_${fieldsetIndex}">
@@ -772,10 +1023,10 @@
           <!-- LMC Projects Implemented Section -->
           <div class="autofill-company-box">
             <h3>LMC Projects Implemented</h3>
-            <div class="lmc-sub-section-title">Health and Safety</div>
-            <table class="lmc-project-table" id="healthSafetyTable_${fieldsetIndex}">
+            <table class="lmc-project-table" id="lmcProjectsTable_${fieldsetIndex}">
               <thead>
                 <tr>
+                  <th class="col-lmc-project">LMC Project</th>
                   <th class="col-project-title">Project Title</th>
                   <th class="col-date-implemented">Date Implemented</th>
                   <th class="col-details">Details</th>
@@ -786,119 +1037,7 @@
                 <!-- Rows added dynamically -->
               </tbody>
             </table>
-            <button type="button" class="add-activity-instance-btn" onclick="addLmcProjectTableRow('healthSafetyTable_${fieldsetIndex}', 'healthSafety', ${fieldsetIndex})">Add Row</button>
-
-            <div class="lmc-sub-section-title">Livelihood</div>
-            <table class="lmc-project-table" id="livelihoodTable_${fieldsetIndex}">
-              <thead>
-                <tr>
-                  <th class="col-project-title">Project Title</th>
-                  <th class="col-date-implemented">Date Implemented</th>
-                  <th class="col-details">Details</th>
-                  <th class="col-action">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Rows added dynamically -->
-              </tbody>
-            </table>
-            <button type="button" class="add-activity-instance-btn" onclick="addLmcProjectTableRow('livelihoodTable_${fieldsetIndex}', 'livelihood', ${fieldsetIndex})">Add Row</button>
-
-            <div class="lmc-sub-section-title">Sports and Recreation</div>
-            <table class="lmc-project-table" id="sportsRecreationTable_${fieldsetIndex}">
-              <thead>
-                <tr>
-                  <th class="col-project-title">Project Title</th>
-                  <th class="col-date-implemented">Date Implemented</th>
-                  <th class="col-details">Details</th>
-                  <th class="col-action">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Rows added dynamically -->
-              </tbody>
-            </table>
-            <button type="button" class="add-activity-instance-btn" onclick="addLmcProjectTableRow('sportsRecreationTable_${fieldsetIndex}', 'sportsRecreation', ${fieldsetIndex})">Add Row</button>
-
-            <div class="lmc-sub-section-title">Productivity/Quality</div>
-            <table class="lmc-project-table" id="productivityQualityTable_${fieldsetIndex}">
-              <thead>
-                <tr>
-                  <th class="col-project-title">Project Title</th>
-                  <th class="col-date-implemented">Date Implemented</th>
-                  <th class="col-details">Details</th>
-                  <th class="col-action">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Rows added dynamically -->
-              </tbody>
-            </table>
-            <button type="button" class="add-activity-instance-btn" onclick="addLmcProjectTableRow('productivityQualityTable_${fieldsetIndex}', 'productivityQuality', ${fieldsetIndex})">Add Row</button>
-
-            <div class="lmc-sub-section-title">Community and Environment Relations</div>
-            <table class="lmc-project-table" id="communityEnvironmentTable_${fieldsetIndex}">
-              <thead>
-                <tr>
-                  <th class="col-project-title">Project Title</th>
-                  <th class="col-date-implemented">Date Implemented</th>
-                  <th class="col-details">Details</th>
-                  <th class="col-action">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Rows added dynamically -->
-              </tbody>
-            </table>
-            <button type="button" class="add-activity-instance-btn" onclick="addLmcProjectTableRow('communityEnvironmentTable_${fieldsetIndex}', 'communityEnvironment', ${fieldsetIndex})">Add Row</button>
-
-            <div class="lmc-sub-section-title">Gender and Development</div>
-            <table class="lmc-project-table" id="genderDevelopmentTable_${fieldsetIndex}">
-              <thead>
-                <tr>
-                  <th class="col-project-title">Project Title</th>
-                  <th class="col-date-implemented">Date Implemented</th>
-                  <th class="col-details">Details</th>
-                  <th class="col-action">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Rows added dynamically -->
-              </tbody>
-            </table>
-            <button type="button" class="add-activity-instance-btn" onclick="addLmcProjectTableRow('genderDevelopmentTable_${fieldsetIndex}', 'genderDevelopment', ${fieldsetIndex})">Add Row</button>
-
-            <div class="lmc-sub-section-title">Family Welfare</div>
-            <table class="lmc-project-table" id="familyWelfareTable_${fieldsetIndex}">
-              <thead>
-                <tr>
-                  <th class="col-project-title">Project Title</th>
-                  <th class="col-date-implemented">Date Implemented</th>
-                  <th class="col-details">Details</th>
-                  <th class="col-action">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Rows added dynamically -->
-              </tbody>
-            </table>
-            <button type="button" class="add-activity-instance-btn" onclick="addLmcProjectTableRow('familyWelfareTable_${fieldsetIndex}', 'familyWelfare', ${fieldsetIndex})">Add Row</button>
-
-            <div class="lmc-sub-section-title">Grievance Machinery/Disciplinary Committee</div>
-            <table class="lmc-project-table" id="grievanceMachineryTable_${fieldsetIndex}">
-              <thead>
-                <tr>
-                  <th class="col-project-title">Project Title</th>
-                  <th class="col-date-implemented">Date Implemented</th>
-                  <th class="col-details">Details</th>
-                  <th class="col-action">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Rows added dynamically -->
-              </tbody>
-            </table>
-            <button type="button" class="add-activity-instance-btn" onclick="addLmcProjectTableRow('grievanceMachineryTable_${fieldsetIndex}', 'grievanceMachinery', ${fieldsetIndex})">Add Row</button>
+            <button type="button" class="add-activity-instance-btn" onclick="addLmcProjectTableRow('lmcProjectsTable_${fieldsetIndex}', ${fieldsetIndex})">Add Row</button>
           </div>
 
           <!-- Issues Addressed Section -->
@@ -912,7 +1051,7 @@
                   <th class="col-date-settled">Date Settled or Resolved</th>
                   <th class="col-date-elevated">If unsettled, date elevated to GM</th>
                   <th class="col-date-settled-gm">Date settled through GM</th>
-                  <th class="col-referred-forums">Referred to other Forums<br>(please specify forum and date)</th>
+                  <th class="col-referred-forums">Referred to other Forums<br><span class="smaller-italic-text">(please specify forum and date)</span></th>
                   <th class="col-action">Action</th>
                 </tr>
               </thead>
@@ -1024,10 +1163,38 @@
               </div>
             </div>
           </div>
-          <button type="button" class="remove-activity-fieldset-btn" onclick="removeRow(this)">Remove Activity</button>
+          <button type="button" class="remove-activity-fieldset-btn" onclick="showConfirmationModal(this)">Remove Activity</button>
         </fieldset>
       `;
     }
+
+    function generateOtherAdvocacyNetworkingFields(fieldsetIndex) {
+        return `
+            <fieldset class="activity-fieldset">
+                <legend>OTHER ADVOCACY & NETWORKING ACTIVITIES ${fieldsetIndex + 1}</legend>
+                <div class="form-group">
+                    <label>Activity Title</label>
+                    <input type="text" name="otherAdvocacyActivityTitle_${fieldsetIndex}" required>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Date Conducted</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="date" name="otherAdvocacyDateConductedStart_${fieldsetIndex}" required style="flex: 1;">
+                            <span>to</span>
+                            <input type="date" name="otherAdvocacyDateConductedEnd_${fieldsetIndex}" required style="flex: 1;">
+                        </div>
+                    </div>
+                </div>
+                <h4>Details</h4>
+                <div class="form-group">
+                    <textarea name="otherAdvocacyDetails_${fieldsetIndex}" rows="4" placeholder="Enter details..."></textarea>
+                </div>
+                <button type="button" class="remove-activity-fieldset-btn" onclick="showConfirmationModal(this)">Remove Activity</button>
+            </fieldset>
+        `;
+    }
+
 
     function addCompanyTableRow(tableId, type, fieldsetIndex) {
       const table = document.getElementById(tableId);
@@ -1080,14 +1247,14 @@
           <td><input type="number" name="${tableId}_maleParticipants_${rowIndex}" oninput="updateCompanyTotalParticipants(this, '${type}', ${fieldsetIndex}, ${rowIndex})" value="0"></td>
           <td><input type="number" name="${tableId}_femaleParticipants_${rowIndex}" oninput="updateCompanyTotalParticipants(this, '${type}', ${fieldsetIndex}, ${rowIndex})" value="0"></td>
           <td><input type="number" name="${tableId}_totalParticipants_${rowIndex}" readonly value="0"></td>
+          <td><input type="number" name="${tableId}_iecMaterials_${rowIndex}" value="0"></td>
           <td class="remove-cell">
-            <button type="button" onclick="removeRow(this)">Remove</button>
+            <button type="button" onclick="showConfirmationModal(this)">Remove</button>
           </td>
       `;
       newRow.innerHTML = rowHtml;
       tbody.appendChild(newRow);
 
-      // After adding the row, populate the company dropdown for this new row, only if it's an enhancement type.
       if (type === 'enhancement') {
           const companySelect = newRow.querySelector(`select[name="${tableId}_companyName_${rowIndex}"]`);
           if (companySelect) {
@@ -1096,49 +1263,68 @@
       }
     }
 
-    function addLmcProjectTableRow(tableId, projectType, fieldsetIndex) {
+    function addDiscussionTableRow(tableId, type, fieldsetIndex) {
         const table = document.getElementById(tableId);
         if (!table) return console.error(`Table with ID '${tableId}' not found.`);
         const tbody = table.querySelector('tbody');
         let rowIndex;
 
-        switch (projectType) {
-            case 'healthSafety':
-                rowIndex = lmcProjectRowCount_healthSafety[fieldsetIndex]++;
-                break;
-            case 'livelihood':
-                rowIndex = lmcProjectRowCount_livelihood[fieldsetIndex]++;
-                break;
-            case 'sportsRecreation':
-                rowIndex = lmcProjectRowCount_sportsRecreation[fieldsetIndex]++;
-                break;
-            case 'productivityQuality':
-                rowIndex = lmcProjectRowCount_productivityQuality[fieldsetIndex]++;
-                break;
-            case 'communityEnvironment':
-                rowIndex = lmcProjectRowCount_communityEnvironment[fieldsetIndex]++;
-                break;
-            case 'genderDevelopment':
-                rowIndex = lmcProjectRowCount_genderDevelopment[fieldsetIndex]++;
-                break;
-            case 'familyWelfare':
-                rowIndex = lmcProjectRowCount_familyWelfare[fieldsetIndex]++;
-                break;
-            case 'grievanceMachinery':
-                rowIndex = lmcProjectRowCount_grievanceMachinery[fieldsetIndex]++;
-                break;
-            default:
-                console.error("Invalid project type for LMC Projects table.");
-                return;
+        if (type === 'preFacilitation') {
+            rowIndex = preFacilitationDiscussionRowCount[fieldsetIndex]++;
+        } else if (type === 'enhancement') {
+            rowIndex = enhancementDiscussionRowCount[fieldsetIndex]++;
+        } else {
+            console.error("Invalid activity type for discussion table.");
+            return;
         }
 
         const newRow = document.createElement('tr');
         newRow.innerHTML = `
+            <td>
+              <select name="${tableId}_topicCategory_${rowIndex}" required>
+                <option value="">Select Category</option>
+                <option value="LMC">LMC</option>
+                <option value="GM">GM</option>
+                <option value="GAD">GAD</option>
+                <option value="Others">Others</option>
+              </select>
+            </td>
+            <td><input type="text" name="${tableId}_topicsDiscussed_${rowIndex}" required></td>
+            <td><input type="text" name="${tableId}_discussedBy_${rowIndex}" required></td>
+            <td><textarea name="${tableId}_details_${rowIndex}" rows="1" placeholder="Enter details..."></textarea></td>
+            <td class="remove-cell">
+                <button type="button" onclick="showConfirmationModal(this)">Remove</button>
+            </td>
+        `;
+        tbody.appendChild(newRow);
+    }
+
+    function addLmcProjectTableRow(tableId, fieldsetIndex) {
+        const table = document.getElementById(tableId);
+        if (!table) return console.error(`Table with ID '${tableId}' not found.`);
+        const tbody = table.querySelector('tbody');
+        const rowIndex = monitoringLmcProjectRowCount[fieldsetIndex]++;
+
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>
+              <select name="${tableId}_lmcProject_${rowIndex}" required>
+                <option value="">Select Project Type</option>
+                <option value="Health and Safety">Health and Safety</option>
+                <option value="Livelihood">Livelihood</option>
+                <option value="Sports and Recreation">Sports and Recreation</option>
+                <option value="Productivity/Quality">Productivity/Quality</option>
+                <option value="Community and Environment Relations">Community and Environment Relations</option>
+                <option value="Gender and Development">Gender and Development</option>
+                <option value="Family Welfare">Family Welfare</option>
+                <option value="Grievance Machinery/Disciplinary Committee">Grievance Machinery/Disciplinary Committee</option>
+              </select>
+            </td>
             <td><input type="text" name="${tableId}_projectTitle_${rowIndex}" required></td>
             <td><input type="date" name="${tableId}_dateImplemented_${rowIndex}" required></td>
             <td><textarea name="${tableId}_details_${rowIndex}" rows="1" placeholder="Enter details..."></textarea></td>
             <td class="remove-cell">
-                <button type="button" onclick="removeRow(this)">Remove</button>
+                <button type="button" onclick="showConfirmationModal(this)">Remove</button>
             </td>
         `;
         tbody.appendChild(newRow);
@@ -1159,19 +1345,19 @@
             <td><input type="date" name="${tableId}_dateSettledGM_${rowIndex}"></td>
             <td><input type="text" name="${tableId}_referredForums_${rowIndex}" placeholder="(specify forum and date)"></td>
             <td class="remove-cell">
-                <button type="button" onclick="removeRow(this)">Remove</button>
+                <button type="button" onclick="showConfirmationModal(this)">Remove</button>
             </td>
         `;
         tbody.appendChild(newRow);
     }
 
 
-    function toggleDeletionFieldsMonitoring(selectElement, fieldsetIndex) {
-        const deletionDetailsDiv = document.getElementById(`monitoringDeletionDetails_${fieldsetIndex}`);
+    function toggleDelistedInactiveFields(checkboxElement, fieldsetIndex) {
+        const deletionDetailsDiv = document.getElementById(`monitoringDelistedInactiveDetails_${fieldsetIndex}`);
         const dateInput = deletionDetailsDiv.querySelector(`input[name="monitoringDateDeleted_${fieldsetIndex}"]`);
         const reasonTextarea = deletionDetailsDiv.querySelector(`textarea[name="monitoringReasonForDeletion_${fieldsetIndex}"]`);
 
-        if (selectElement.value === 'Yes') {
+        if (checkboxElement.checked) {
             deletionDetailsDiv.classList.remove('hidden-field');
             dateInput.setAttribute('required', 'true');
             reasonTextarea.setAttribute('required', 'true');
@@ -1195,57 +1381,36 @@
       totalInput.value = male + female;
     }
 
-    // Function to populate the Company Name dropdowns
     function loadCompanies(selectElement) {
-        // In a real scenario, this would call google.script.run to get data from your sheet
-        // Example: google.script.run.withSuccessHandler(function(companies) {
-        //              companies.forEach(company => {
-        //                  selectElement.add(new Option(company, company));
-        //              });
-        //          }).getCompanies();
-
-        // For now, using mock data
         selectElement.innerHTML = '<option value="">Select Company</option>';
         MOCK_COMPANIES.forEach(company => {
             selectElement.add(new Option(company, company));
         });
     }
 
-    // Function to populate LMC Name dropdown based on selected Company Name
-    // This function now handles both table rows (preFacilitation/enhancement) and direct fields (monitoring)
     function loadLMCsForCompany(companySelectElement, type, fieldsetIndex, rowIndex = null) {
         const selectedCompany = companySelectElement.value;
         let lmcSelectElement;
 
-        if (rowIndex !== null) { // For table rows
+        if (rowIndex !== null) {
             lmcSelectElement = document.querySelector(`select[name="companyTable_${type}_${fieldsetIndex}_lmcName_${rowIndex}"]`);
-        } else { // For direct fields (like monitoring)
+        } else {
             lmcSelectElement = document.querySelector(`select[name="${type}LmcName_${fieldsetIndex}"]`);
         }
         
-        lmcSelectElement.innerHTML = '<option value="">Select LMC</option>'; // Clear existing options
+        lmcSelectElement.innerHTML = '<option value="">Select LMC</option>';
 
         if (selectedCompany) {
-            // In a real scenario, this would call google.script.run to get dependent LMCs
-            // Example: google.script.run.withSuccessHandler(function(lmcs) {
-            //              lmcs.forEach(lmc => {
-            //                  lmcSelectElement.add(new Option(lmc, lmc));
-            //              });
-            //          }).getLMCsByCompany(selectedCompany);
-
-            // For now, using mock data
             const lmcs = MOCK_COMPANY_LMC_DATA[selectedCompany] || [];
             lmcs.forEach(lmc => {
                 lmcSelectElement.add(new Option(lmc, lmc));
             });
         }
-        // After LMC is loaded (or cleared), attempt to autofill other details
         if (type === 'monitoring') {
             autofillMonitoringCompanyDetails(selectedCompany, lmcSelectElement.value, fieldsetIndex);
         }
     }
 
-    // New function to autofill monitoring-specific company details
     function autofillMonitoringCompanyDetails(companyName, lmcName, fieldsetIndex) {
         const companyDetails = MOCK_FULL_COMPANY_DETAILS[companyName] ? MOCK_FULL_COMPANY_DETAILS[companyName][lmcName] : null;
 
@@ -1269,13 +1434,11 @@
 
 
         if (companyDetails) {
-            // Autofill company details
             populateSelect(categorySelect, ['Organized', 'Unorganized'], companyDetails.category);
             acronymInput.value = companyDetails.acronym || '';
             populateSelect(filedCaseSelect, ['Yes', 'No'], companyDetails.filedCase);
             populateSelect(filedRFADropdown, ['Yes', 'No'], companyDetails.filedRFA);
 
-            // Autofill address details
             buildingInput.value = companyDetails.address.building || '';
             streetInput.value = companyDetails.address.street || '';
             barangayInput.value = companyDetails.address.barangay || '';
@@ -1283,24 +1446,14 @@
             provinceInput.value = companyDetails.address.province || '';
             populateSelect(ecozoneSelect, ['Yes', 'No'], companyDetails.address.ecozone);
 
-            // Autofill industry details
             populateSelect(sectionSelect, Object.keys(industryData), companyDetails.industry.section);
-            // After setting section, trigger updates for dependent dropdowns
-            updateIndustryDropdowns(fieldsetIndex, 'monitoring'); // This will cascade populate based on section
-            // Now, explicitly set the remaining values, ensuring they are valid options after cascading
+            updateIndustryDropdowns(fieldsetIndex, 'monitoring');
             populateSelect(divisionSelect, Object.keys(industryData[companyDetails.industry.section] || {}), companyDetails.industry.division);
             populateSelect(groupSelect, Object.keys(industryData[companyDetails.industry.section]?.[companyDetails.industry.division] || {}), companyDetails.industry.group);
             populateSelect(classSelect, Object.keys(industryData[companyDetails.industry.section]?.[companyDetails.industry.division]?.[companyDetails.industry.group] || {}), companyDetails.industry.class);
             populateSelect(subclassSelect, industryData[companyDetails.industry.section]?.[companyDetails.industry.division]?.[companyDetails.industry.group]?.[companyDetails.industry.class] || [], companyDetails.industry.subclass);
 
-
-            // In a real Apps Script scenario:
-            // google.script.run.withSuccessHandler(function(details) {
-            //   // Populate fields with `details` object
-            // }).getCompanyFullDetails(companyName, lmcName);
-
         } else {
-            // Clear fields if no details found or LMC is not selected
             categorySelect.value = '';
             acronymInput.value = '';
             filedCaseSelect.value = '';
@@ -1313,7 +1466,7 @@
             provinceInput.value = '';
             ecozoneSelect.value = '';
 
-            populateSelect(sectionSelect, Object.keys(industryData)); // Repopulate initial section
+            populateSelect(sectionSelect, Object.keys(industryData));
             populateSelect(divisionSelect, []);
             populateSelect(groupSelect, []);
             populateSelect(classSelect, []);
@@ -1327,20 +1480,16 @@
       const newFieldsetContainer = document.createElement('div');
       newFieldsetContainer.innerHTML = generatePreFacilitationFields(preFacilitationActivityCount);
       
-      // Append the new fieldset container to the main container
       container.appendChild(newFieldsetContainer);
       
-      // Move the "Add New Pre-Facilitation Activity" button to the end AFTER adding the new fieldset
-      // This ensures new fieldsets appear before the "Add New" button
-      const addButton = container.querySelector('.add-activity-instance-btn');
-      if (addButton && addButton.parentNode === container) { // Check if button exists and is a direct child
-          container.appendChild(addButton); // Moves the button to the very end
-      }
-      
-      // Manually add the first company row after the fieldset is added to the DOM
-      // Pass 'preFacilitation' as type to addCompanyTableRow
       addCompanyTableRow(`companyTable_preFacilitation_${preFacilitationActivityCount}`, 'preFacilitation', preFacilitationActivityCount);
+      addDiscussionTableRow(`discussionTable_preFacilitation_${preFacilitationActivityCount}`, 'preFacilitation', preFacilitationActivityCount);
+
       preFacilitationActivityCount++;
+      const addInstanceButton = document.getElementById('addActivityInstanceButton');
+      if (addInstanceButton) {
+          container.appendChild(addInstanceButton);
+      }
     }
 
     function addEnhancementActivityInstance() {
@@ -1349,16 +1498,15 @@
       newFieldsetContainer.innerHTML = generateEnhancementFields(enhancementActivityCount);
       
       container.appendChild(newFieldsetContainer);
-
-      const addButton = container.querySelector('.add-activity-instance-btn');
-      if (addButton && addButton.parentNode === container) { 
-          container.appendChild(addButton); 
-      }
       
-      // Manually add the first company row for enhancement activity
-      // Pass 'enhancement' as type to addCompanyTableRow
       addCompanyTableRow(`companyTable_enhancement_${enhancementActivityCount}`, 'enhancement', enhancementActivityCount);
+      addDiscussionTableRow(`discussionTable_enhancement_${enhancementActivityCount}`, 'enhancement', enhancementActivityCount);
+
       enhancementActivityCount++;
+      const addInstanceButton = document.getElementById('addActivityInstanceButton');
+      if (addInstanceButton) {
+          container.appendChild(addInstanceButton);
+      }
     }
 
     function addMonitoringActivityInstance() {
@@ -1367,54 +1515,85 @@
       newFieldsetContainer.innerHTML = generateMonitoringFields(monitoringActivityCount);
       
       container.appendChild(newFieldsetContainer);
-
-      const addButton = container.querySelector('.add-activity-instance-btn');
-      if (addButton && addButton.parentNode === container) { 
-          container.appendChild(addButton); 
-      }
       
-      // Manually populate the company dropdown for the newly added monitoring section
       const companySelect = newFieldsetContainer.querySelector(`select[name="monitoringCompanyName_${monitoringActivityCount}"]`);
       if (companySelect) {
           loadCompanies(companySelect);
       }
+      addLmcProjectTableRow(`lmcProjectsTable_${monitoringActivityCount}`, monitoringActivityCount);
+      addIssuesAddressedTableRow(`issuesAddressedTable_${monitoringActivityCount}`, monitoringActivityCount);
 
       monitoringActivityCount++;
+      const addInstanceButton = document.getElementById('addActivityInstanceButton');
+      if (addInstanceButton) {
+          container.appendChild(addInstanceButton);
+      }
     }
 
-    function removeRow(button) {
-      const row = button.closest('tr');
-      if (row) {
-        row.remove();
-      } else {
-        // If it's not a table row, it must be a fieldset (main activity instance)
-        // Find the div that contains the fieldset and remove it
-        button.closest('.activity-fieldset').parentElement.remove();
+    function addOtherAdvocacyNetworkingInstance() {
+        const container = document.getElementById('activityFieldsContainer');
+        const newFieldsetContainer = document.createElement('div');
+        newFieldsetContainer.innerHTML = generateOtherAdvocacyNetworkingFields(otherAdvocacyNetworkingCount);
+
+        container.appendChild(newFieldsetContainer);
+        
+        otherAdvocacyNetworkingCount++;
+        const addInstanceButton = document.getElementById('addActivityInstanceButton');
+        if (addInstanceButton) {
+            container.appendChild(addInstanceButton);
+        }
+    }
+
+    function removeRow(targetElement) {
+      if (targetElement) {
+        targetElement.remove();
       }
+    }
+
+    // Functions for the custom confirmation modal
+    function showConfirmationModal(button) {
+      elementToRemove = button.closest('tr') || button.closest('.activity-fieldset').parentElement;
+      document.getElementById('confirmationOverlay').style.display = 'flex';
+    }
+
+    function confirmRemoval() {
+      if (elementToRemove) {
+        removeRow(elementToRemove);
+        elementToRemove = null; // Clear the reference
+      }
+      document.getElementById('confirmationOverlay').style.display = 'none';
+    }
+
+    function cancelRemoval() {
+      elementToRemove = null; // Clear the reference
+      document.getElementById('confirmationOverlay').style.display = 'none';
     }
 
 
     function displayActivityFields() {
       const selectedActivity = document.getElementById('activityTypeSelect').value;
       const container = document.getElementById('activityFieldsContainer');
-      container.innerHTML = ''; // Clear previous fields
-      preFacilitationActivityCount = 0; // Reset counter when main activity type changes
-      enhancementActivityCount = 0; // Reset counter for enhancement activities
-      monitoringActivityCount = 0; // Reset counter for monitoring activities
+      container.innerHTML = '';
+      preFacilitationActivityCount = 0;
+      enhancementActivityCount = 0;
+      monitoringActivityCount = 0;
+      otherAdvocacyNetworkingCount = 0; // Reset counter for new activity type
+
+      const existingAddInstanceButton = document.getElementById('addActivityInstanceButton');
+      if (existingAddInstanceButton) {
+          existingAddInstanceButton.remove();
+      }
+
+      const addButton = document.createElement('button');
+      addButton.type = 'button';
+      addButton.className = 'add-activity-instance-btn';
+      addButton.id = 'addActivityInstanceButton';
 
       if (selectedActivity === 'PRE-FACILITATION ACTIVITY') {
-        // Add the button to add more instances first (it will be moved by addPreFacilitationActivityInstance)
-        const addButton = document.createElement('button');
-        addButton.type = 'button';
-        addButton.className = 'add-activity-instance-btn';
         addButton.textContent = 'Add New Pre-Facilitation Activity';
         addButton.onclick = addPreFacilitationActivityInstance;
         container.appendChild(addButton);
-
-        // Automatically add the first instance when selected
         addPreFacilitationActivityInstance();
-
-
       } else if (selectedActivity === 'FACILITATION ACTIVITY') {
         container.innerHTML = `
           <fieldset class="activity-fieldset">
@@ -1423,39 +1602,29 @@
           </fieldset>
         `;
       } else if (selectedActivity === 'ENHANCEMENT ACTIVITY') {
-        // Add the button to add more instances for enhancement activity
-        const addButton = document.createElement('button');
-        addButton.type = 'button';
-        addButton.className = 'add-activity-instance-btn';
         addButton.textContent = 'Add New Enhancement Activity';
         addButton.onclick = addEnhancementActivityInstance;
         container.appendChild(addButton);
-
-        // Automatically add the first instance when selected
         addEnhancementActivityInstance();
-
       } else if (selectedActivity === 'MONITORING ACTIVITY') {
-        // Add the button to add more instances for monitoring activity
-        const addButton = document.createElement('button');
-        addButton.type = 'button';
-        addButton.className = 'add-activity-instance-btn';
         addButton.textContent = 'Add New Monitoring Activity';
         addButton.onclick = addMonitoringActivityInstance;
         container.appendChild(addButton);
-
-        // Automatically add the first instance when selected
         addMonitoringActivityInstance();
+      } else if (selectedActivity === 'OTHER ADVOCACY & NETWORKING ACTIVITIES') {
+        addButton.textContent = 'Add New Other Advocacy & Networking Activity';
+        addButton.onclick = addOtherAdvocacyNetworkingInstance;
+        container.appendChild(addButton);
+        addOtherAdvocacyNetworkingInstance();
       }
     }
 
     function handleSubmit(event) {
       event.preventDefault();
       document.getElementById("loadingOverlay").style.display = "flex";
-      // Simulate a delay for submission
       setTimeout(() => {
         document.getElementById("loadingOverlay").style.display = "none";
         alert("Form submitted successfully!");
-        // document.getElementById("activityForm").reset();
       }, 2000);
     }
   </script>
