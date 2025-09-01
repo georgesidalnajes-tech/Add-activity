@@ -1,0 +1,556 @@
+else if (selectedActivity === 'FACILITATION ACTIVITY') {
+        container.innerHTML = `<div class="form-group">
+              <label>Region</label>
+              <select name="region" required>
+                <option value="">Select Region</option>
+                <option>NCR</option><option>CAR</option><option>I</option><option>II</option><option>III</option>
+                <option>IVA</option><option>IVB</option><option>V</option><option>VI</option><option>VII</option>
+                <option>VIII</option><option>IX</option><option>X</option><option>XI</option><option>XII</option><option>XIII</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Category</label>
+              <select name="category" id="category" required onchange="toggleUnionVisibility()">
+                <option value="">Select Category</option>
+                <option>Organized</option><option>Unorganized</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="form-group"><label>Company Name</label><input type="text" name="companyName" required></div>
+            <div class="form-group"><label>Acronym</label><input type="text" name="acronym"></div>
+          </div>
+
+          <div class="row">
+            <div class="form-group">
+              <label>With Filed Case?</label>
+              <select name="ecozone">
+                <option value="">Select</option><option>Yes</option><option>No</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>With Filed RFA?</label>
+              <select name="ecozone">
+                <option value="">Select</option><option>Yes</option><option>No</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content">
+        <div class="simple-box">
+          <h3 class="box-title" >Company Address</h3>
+          <div class="row">
+            <div class="form-group"><label>Building No.</label><input type="text" name="building"></div>
+            <div class="form-group"><label>Street</label><input type="text" name="street"></div>
+            <div class="form-group"><label>Barangay</label><input type="text" name="barangay"></div>
+          </div>
+
+          <div class="row">
+            <div class="form-group"><label>Municipality</label><input type="text" name="municipality"></div>
+            <div class="form-group"><label>Province/City</label><input type="text" name="province"></div>
+            <div class="form-group">
+              <label>Ecozone</label>
+              <select name="ecozone">
+                <option value="">Select</option><option>Yes</option><option>No</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content">
+        <div class="simple-box">
+          <h3 class="box-title">Industry</h3>
+          <div class="row">
+            <div class="form-group"><label>Section</label><select id="section" name="section"></select></div>
+            <div class="form-group"><label>Division</label><select id="division" name="division"></select></div>
+          </div>
+
+          <div class="row">
+            <div class="form-group"><label>Group</label><select id="group" name="group"></select></div>
+            <div class="form-group"><label>Class</label><select id="class" name="class"></select></div>
+            <div class="form-group"><label>Subclass</label><select id="subclass" name="subclass"></select></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content">
+        <div class="simple-box">
+          <h3 class="box-title">Employment</h3>
+          <div class="row">
+            <div class="form-group ownership-input">
+              <label>Ownership/Nationality</label>
+              <input type="text" name="ownership">
+            </div>
+            <div class="form-group">
+              <label>Key Employment Generator</label>
+              <select name="key">
+                <option value="">Select</option>
+                <option>Yes</option>
+                <option>No</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group small-input-1">
+              <label>Male</label>
+              <input type="number" name="male" oninput="updateEmployment()">
+            </div>
+            <div class="form-group small-input-1">
+              <label>Female</label>
+              <input type="number" name="female" oninput="updateEmployment()">
+            </div>
+            <div class="form-group small-input-1">
+              <label>Total Employees</label>
+              <input type="number" name="totalEmployees" readonly>
+            </div>
+            <div class="form-group">
+              <label>Size</label>
+              <input type="text" name="size" readonly>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content">
+        <div class="simple-box">
+          <h3 class="box-title">Companies with Existing Programs</h3>
+          <div class="checkbox-row">
+            <label><input type="checkbox" name="rtwpb"> Productivity Improvement Program</label>
+            <label><input type="checkbox" name="osh"> Occupational Safety and Health</label>
+            <label><input type="checkbox" name="fw"> Family Welfare</label>
+          </div>
+        </div>
+        `;
+
+        /* -----------------------
+        FACILITATION ACCORDION INIT
+      ----------------------- */
+      function initFacilitationAccordion() {
+        const accBtns = document.getElementsByClassName("fac-accordion-btn");
+        for (let i = 0; i < accBtns.length; i++) {
+          accBtns[i].onclick = function() {
+            this.classList.toggle("active");
+            const panel = this.nextElementSibling;
+            panel.style.display = panel.style.display === "block" ? "none" : "block";
+          };
+        }
+      }
+
+      function generateLmcFields() {
+        const num = parseInt(document.getElementById('numLMCs').value);
+        const container = document.getElementById('lmcContainer');
+        container.innerHTML = '';
+
+        if (!isNaN(num) && num > 0) {
+          for (let i = 1; i <= num; i++) {
+            const lmcContent = `
+              <fieldset style="margin-top:20px;padding:10px;border:1px solid #ccc;background-color:#f2f2f2">
+                <legend><strong>LMC PROFILE ${i}</strong></legend>
+
+                <button type="button" class="fac-accordion-btn union-details-toggle">Union Details (for LMC ${i})</button>
+                <div class="fac-accordion-panel union-details-toggle">
+                    <div class="row">
+                        <div class="form-group"><label>&nbsp;&nbsp;Union Name:</label><input type="text" name="unionName_${i}"></div>
+                        <div class="form-group"><label>&nbsp;&nbsp;Bargaining Unit:</label><input type="text" name="bargainingUnit_${i}"></div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group"><label>&nbsp;&nbsp;Federation:</label><input type="text" name="federation_${i}"></div>
+                        <div class="form-group"><label>&nbsp;&nbsp;CBA Duration:</label><input type="text" name="cbaDuration_${i}"></div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group small-input"><label>&nbsp;&nbsp;Male Members:</label><input type="number" name="unionMale_${i}" oninput="updateUnionTotal(${i})"></div>
+                        <div class="form-group small-input"><label>Female Members:</label><input type="number" name="unionFemale_${i}" oninput="updateUnionTotal(${i})"></div>
+                        <div class="form-group small-input"><label>Total Members:</label><input type="number" name="unionTotal_${i}" readonly></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                  <div class="form-group">
+                    <label>LMC Name</label>
+                    <input type="text" name="lmcName_${i}">
+                  </div>
+                  <div class="form-group">
+                    <label>Date of Facilitation</label>
+                    <input type="date" name="facilitationDate_${i}">
+                  </div>
+                  <div class="form-group">
+                    <label>Facilitated By</label>
+                    <input type="text" name="facilitatedBy_${i}">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label>LMC Organization Involvement</label>
+                  <div class="checkbox-row">
+                    <label><input type="checkbox" name="orgPhilamcop_${i}"> PHILAMCOP</label>
+                    <label><input type="checkbox" name="orgRegional_${i}" onchange="toggleInput('regionalText_${i}', this)"> Regional Association</label>
+                    <input type="text" id="regionalText_${i}" name="regionalText_${i}" placeholder="Specify" style="display:none; margin-left:3px;">
+                    <label><input type="checkbox" name="orgOthers_${i}" onchange="toggleInput('othersText_${i}', this)"> Others</label>
+                    <input type="text" id="othersText_${i}" name="othersText_${i}" placeholder="Specify" style="display:none; margin-left:3px;">
+                  </div>
+                </div>
+
+                <h3>CONTACT PERSONS</h3>
+                <table class="lmc-table">
+                  <tr>
+                    <th></th>
+                    <th>Head of Company</th>
+                    <th>Management</th>
+                    <th>Labor</th>
+                  </tr>
+                  <tr>
+                    <td><strong>Name</strong></td>
+                    <td><input type="text" name="headName_${i}"></td>
+                    <td><input type="text" name="mgmtName_${i}"></td>
+                    <td><input type="text" name="laborName_${i}"></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Position</strong></td>
+                    <td><input type="text" name="headPosition_${i}"></td>
+                    <td><input type="text" name="mgmtPosition_${i}"></td>
+                    <td><input type="text" name="laborPosition_${i}"></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Telephone No.</strong></td>
+                    <td><input type="number" name="headTel_${i}"></td>
+                    <td><input type="number" name="mgmtTel_${i}"></td>
+                    <td><input type="number" name="laborTel_${i}"></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Email</strong></td>
+                    <td><input type="email" name="headEmail_${i}"></td>
+                    <td><input type="email" name="mgmtEmail_${i}"></td>
+                    <td><input type="email" name="laborEmail_${i}"></td>
+                  </tr>
+                </table>
+
+                <h3>BACKGROUND / HISTORY OF LMC</h3>
+                <div class="form-group">
+                  <label>Reason/s for establishing LMC</label>
+                  <textarea name="lmcReasons_${i}" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                  <label>Objectives of LMC</label>
+                  <textarea name="lmcObjectives_${i}" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                  <label>Vision/Mission Statement</label>
+                  <textarea name="lmcVisionMission_${i}" rows="4"></textarea>
+                </div>
+
+                <h3>ORGANIZATIONAL STRUCTURE</h3>
+                <div class="checkbox-row">
+                  <label><input type="checkbox" name="orgSteering_${i}"> Steering Committee</label>
+                  <label><input type="checkbox" name="orgSubcommittees_${i}"> Sub-committees</label>
+                  <label><input type="checkbox" name="orgSecretariat_${i}"> Secretariat</label>
+                </div>
+
+                <h3>COMPOSITION OF LMC</h3>
+
+                <h4>Management</h4>
+                <table class="lmc-table-1" id="managementTable_${i}">
+                    <colgroup>
+                        <col class="name-col">
+                        <col class="position-col">
+                        <col class="select-col">
+                        <col class="remove-col">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Position</th>
+                            <th>Sex</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="managementTable_${i}_name[]"></td>
+                            <td><input type="text" name="managementTable_${i}_position[]"></td>
+                            <td class="select-cell">
+                                <select name="managementTable_${i}_sex[]" style="width: 100px;">
+                                    <option value="">Select...</option>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                </select>
+                            </td>
+                            <td class="remove-cell">
+                                <button type="button" onclick="removeRow(this)">Remove</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" onclick="addLmcRow('managementTable_${i}')">Add Row</button>
+
+                <h4 style="margin-top:20px;">Labor</h4>
+                <table class="lmc-table-1" id="laborTable_${i}">
+                    <colgroup>
+                        <col class="name-col">
+                        <col class="position-col">
+                        <col class="select-col">
+                        <col class="remove-col">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Position</th>
+                            <th>Sex</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="laborTable_${i}_name[]"></td>
+                            <td><input type="text" name="laborTable_${i}_position[]"></td>
+                            <td class="select-cell">
+                                <select name="laborTable_${i}_sex[]" style="width: 100px;">
+                                    <option value="">Select...</option>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                </select>
+                            </td>
+                            <td class="remove-cell">
+                                <button type="button" onclick="removeRow(this)">Remove</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" onclick="addLmcRow('laborTable_${i}')">Add Row</button>
+
+                <h3>LMC Structure</h3>
+                <div class="row">
+                  <div class="form-group">
+                    <input type="file" id="attachments" name="attachments[]" accept=".jpg, .jpeg, .png" multiple>
+                  </div>
+                </div>
+
+                <h3>ADDITIONAL LMC FACILITATION DETAILS</h3>
+                <div class="accordion-columns-container">
+                  <div class="accordion-column-item">
+                    <button type="button" class="fac-accordion-btn">Sub-committees</button>
+                    <div class="fac-accordion-panel">
+                      <div class="checkbox-col">
+                        <label><input type="checkbox" name="subcProductivity_${i}"> Productivity</label>
+                        <label><input type="checkbox" name="subcHealthSafety_${i}"> Health & Safety</label>
+                        <label><input type="checkbox" name="subcLivelihood_${i}"> Livelihood</label>
+                        <label><input type="checkbox" name="subcSportsRec_${i}"> Sports and Recreation</label>
+                        <label><input type="checkbox" name="subcCommunityEnv_${i}"> Community & Environment Relations</label>
+                        <label><input type="checkbox" name="subcGenderDev_${i}"> Gender & Development</label>
+                        <label><input type="checkbox" name="subcFamilyWelfare_${i}"> Family Welfare</label>
+                        <label><input type="checkbox" name="subcGrievance_${i}"> Grievance Machinery/Discipline Committee</label>
+                        <label><input type="checkbox" onchange="toggleInput('subcOthersText_${i}', this)"> Others</label>
+                        <input type="text" id="subcOthersText_${i}" name="subcOthersText_${i}" placeholder="Specify" style="display:none;">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion-column-item">
+                    <button type="button" class="fac-accordion-btn">LMC Sub-committees Representation</button>
+                    <div class="fac-accordion-panel">
+                      <span class="fac-accordion-subtitle">&nbsp;&nbsp;Management</span>
+                      <div class="checkbox-col">
+                        <label><input type="checkbox" name="repMgmtTop_${i}"> Top Management</label>
+                        <label><input type="checkbox" name="repMgmtLocalTop_${i}"> Local Top Management</label>
+                        <label><input type="checkbox" name="repMgmtMiddle_${i}"> Middle Management</label>
+                        <label><input type="checkbox" name="repMgmtHR_${i}"> HR Department</label>
+                        <label><input type="checkbox" onchange="toggleInput('repMgmtOthersText_${i}', this)"> Others</label>
+                        <input type="text" id="repMgmtOthersText_${i}" name="repMgmtOthersText_${i}" placeholder="Specify" style="display:none;">
+                      </div>
+                      <span class="fac-accordion-subtitle">&nbsp;&nbsp;Labor</span>
+                      <div class="checkbox-col">
+                        <label><input type="checkbox" name="repLaborOfficers_${i}"> Union Officers</label>
+                        <label><input type="checkbox" name="repLaborMembers_${i}"> Union Members</label>
+                        <label><input type="checkbox" name="repLaborRankFile_${i}"> Rank and File</label>
+                        <label><input type="checkbox" onchange="toggleInput('repLaborOthersText_${i}', this)"> Others</label>
+                        <input type="text" id="repLaborOthersText_${i}" name="repLaborOthersText_${i}" placeholder="Specify" style="display:none;">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion-column-item">
+                    <button type="button" class="fac-accordion-btn">Meetings</button>
+                    <div class="fac-accordion-panel">
+                      <div class="checkbox-col">
+                        <label><input type="checkbox" onchange="toggleInput('mtgFrequencyText_${i}', this)"> Frequency</label>
+                        <input type="text" id="mtgFrequencyText_${i}" name="mtgFrequencyText_${i}" placeholder="Specify frequency" style="display:none;">
+                        <label><input type="checkbox" onchange="toggleInput('mtgVenueText_${i}', this)"> Venue</label>
+                        <input type="text" id="mtgVenueText_${i}" name="mtgVenueText_${i}" placeholder="Specify venue" style="display:none;">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion-column-item">
+                    <button type="button" class="fac-accordion-btn">Information Dissemination</button>
+                    <div class="fac-accordion-panel">
+                      <div class="checkbox-col">
+                        <label><input type="checkbox" name="infoNewsletter_${i}"> Newsletter</label>
+                        <label><input type="checkbox" name="infoBulletin_${i}"> Post to Bulletin Boards</label>
+                        <label><input type="checkbox" name="infoInstantMsg_${i}"> Instant Messaging Platforms (FB Messenger, SMS, etc.)</label>
+                        <label><input type="checkbox" name="infoSocialMedia_${i}"> Social Media Platforms (FB, Instagram, etc.)</label>
+                        <label><input type="checkbox" onchange="toggleInput('infoOthersText_${i}', this)"> Others</label>
+                        <input type="text" id="infoOthersText_${i}" name="infoOthersText_${i}" placeholder="Specify" style="display:none;">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion-column-item">
+                    <button type="button" class="fac-accordion-btn">Feedback Mechanism</button>
+                    <div class="fac-accordion-panel">
+                      <div class="checkbox-col">
+                        <label><input type="checkbox" name="fbSuggestionBox_${i}"> Suggestion Box</label>
+                        <label><input type="checkbox" name="fbAgendaPrep_${i}"> Part of Agenda Preparation</label>
+                        <label><input type="checkbox" name="fbInternalSurvey_${i}"> Internal Survey</label>
+                        <label><input type="checkbox" onchange="toggleInput('fbOthersText_${i}', this)"> Others</label>
+                        <input type="text" id="fbOthersText_${i}" name="fbOthersText_${i}" placeholder="Specify" style="display:none;">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion-column-item">
+                    <button type="button" class="fac-accordion-btn">Decision Making Process</button>
+                    <div class="fac-accordion-panel">
+                      <div class="checkbox-col">
+                        <label><input type="checkbox" name="decConsensus_${i}"> Consensus Decision Making</label>
+                        <label><input type="checkbox" onchange="toggleInput('decOthersText_${i}', this)"> Others</label>
+                        <input type="text" id="decOthersText_${i}" name="decOthersText_${i}" placeholder="Specify" style="display:none;">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion-column-item">
+                    <button type="button" class="fac-accordion-btn">Nature of LMC Decision</button>
+                    <div class="fac-accordion-panel">
+                      <div class="checkbox-col">
+                        <label><input type="checkbox" name="natFinal_${i}"> Final</label>
+                        <label><input type="checkbox" name="natSubjectTopMgt_${i}"> Subject to Final Approval by Top Mgt</label>
+                        <label><input type="checkbox" onchange="toggleInput('natOthersText_${i}', this)"> Others</label>
+                        <input type="text" id="natOthersText_${i}" name="natOthersText_${i}" placeholder="Specify" style="display:none;">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion-column-item">
+                    <button type="button" class="fac-accordion-btn">Implementation of LMC Decisions</button>
+                    <div class="fac-accordion-panel">
+                      <div class="checkbox-col">
+                        <label><input type="checkbox" name="implResolution_${i}"> Thru Resolution</label>
+                        <label><input type="checkbox" name="implMemos_${i}"> Thru Memos</label>
+                        <label><input type="checkbox" onchange="toggleInput('implOthersText_${i}', this)"> Others</label>
+                        <input type="text" id="implOthersText_${i}" name="implOthersText_${i}" placeholder="Specify" style="display:none;">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion-column-item">
+                    <button type="button" class="fac-accordion-btn">Implementors of LMC Decisions</button>
+                    <div class="fac-accordion-panel">
+                      <div class="checkbox-col">
+                        <label><input type="checkbox" name="implrSecretariat_${i}"> LMC Secretariat</label>
+                        <label><input type="checkbox" name="implrSubcommittee_${i}"> LMC Sub-committee</label>
+                        <label><input type="checkbox" name="implrHR_${i}"> HR Department</label>
+                        <label><input type="checkbox" onchange="toggleInput('implrOthersText_${i}', this)"> Others</label>
+                        <input type="text" id="implrOthersText_${i}" name="implrOthersText_${i}" placeholder="Specify" style="display:none;">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion-column-item">
+                    <button type="button" class="fac-accordion-btn">Monitoring & Evaluation of LMC Activities</button>
+                    <div class="fac-accordion-panel">
+                      <div class="checkbox-col">
+                        <label><input type="checkbox" name="monSecretariat_${i}"> LMC Secretariat</label>
+                        <label><input type="checkbox" name="monSubcommittee_${i}"> LMC Sub-committee</label>
+                        <label><input type="checkbox" name="monHR_${i}"> HR Department</label>
+                        <label><input type="checkbox" onchange="toggleInput('monOthersText_${i}', this)"> Others</label>
+                        <input type="text" id="monOthersText_${i}" name="monOthersText_${i}" placeholder="Specify" style="display:none;">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion-column-item">
+                    <button type="button" class="fac-accordion-btn">Other Joint Committees in the Company</button>
+                    <div class="fac-accordion-panel">
+                      <div class="checkbox-col">
+                        <label><input type="checkbox" name="jcCBA_${i}"> Cited in CBA</label>
+                        <label><input type="checkbox" onchange="toggleInput('jcOthersText_${i}', this)"> Others</label>
+                        <input type="text" id="jcOthersText_${i}" name="jcOthersText_${i}" placeholder="Specify" style="display:none;">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<h3>Memorandum of Commitment (.pdf)</h3>
+<div class="row">
+  <div class="form-group">
+    <input type="file" id="pdf-attachments" name="pdf-attachments[]" accept=".pdf" multiple>
+  </div>
+</div>
+</div></fieldset>`
+            container.innerHTML += lmcContent;
+          }
+          // Re-initialize accordion for newly added LMC fields
+          initFacilitationAccordion();
+          // Re-evaluate union details visibility for newly generated fields
+          toggleUnionVisibility();
+        }
+      }
+
+      function updateUnionTotal(i) {
+        const male = parseInt(document.querySelector(`[name="unionMale_${i}"]`).value) || 0;
+        const female = parseInt(document.querySelector(`[name="unionFemale_${i}"]`).value) || 0;
+        document.querySelector(`[name="unionTotal_${i}"]`).value = male + female;
+      }
+
+      function toggleUnionVisibility() {
+        const categorySelect = document.getElementById('category');
+        const unionDetailsElements = document.querySelectorAll('.union-details-toggle');
+
+        if (categorySelect.value === 'Organized') {
+          unionDetailsElements.forEach(el => {
+            el.style.display = el.tagName === 'BUTTON' ? 'block' : 'block'; // Show both button and panel
+          });
+        } else {
+          unionDetailsElements.forEach(el => {
+            el.style.display = 'none'; // Hide both button and panel
+            if (el.classList.contains('fac-accordion-panel')) {
+              el.style.display = 'none'; // Ensure panel is hidden
+              el.previousElementSibling.classList.remove('active'); // Remove active class from button if panel is closed
+            }
+          });
+          // Also clear values in hidden union details fields if they are present
+          unionDetailsElements.forEach(el => {
+            if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') {
+              el.value = '';
+            } else if (el.querySelectorAll) {
+              el.querySelectorAll('input, select, textarea').forEach(input => {
+                input.value = '';
+                if (input.type === 'checkbox') {
+                  input.checked = false;
+                }
+              });
+            }
+          });
+        }
+      }
+
+    function addLmcRow(tableId) {
+      const table = document.getElementById(tableId);
+      if (!table) return console.error(`Table with ID '${tableId}' not found.`);
+      const tbody = table.querySelector('tbody');
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
+        <td><input type="text" name="${tableId}_name[]"></td>
+        <td><input type="text" name="${tableId}_position[]"></td>
+        <td class="select-cell">
+            <select name="${tableId}_sex[]">
+                <option value="">Select</option>
+                <option>Male</option>
+                <option>Female</option>
+            </select>
+        </td>
+        <td class="remove-cell">
+            <button type="button" onclick="removeRow(this)">Remove</button>
+        </td>
+      `;
+      tbody.appendChild(newRow);
+    }
+    
+    function removeRow(button) {
+      const row = button.closest('tr');
+      if (row) {
+        row.remove();
+      }
+    }
